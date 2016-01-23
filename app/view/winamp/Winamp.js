@@ -4,10 +4,10 @@ Ext.define('Playground.view.winamp.Winamp', {
 
   requires: [
     'Ext.panel.Panel',
-    'Ext.slider.Single',
 
     'Playground.view.winamp.WinampController',
-    'Playground.view.winamp.WinampModel'
+    'Playground.view.winamp.WinampModel',
+    'Playground.view.winamp.slider.Vslider'
   ],
 
   controller: 'winamp-main',
@@ -27,9 +27,10 @@ Ext.define('Playground.view.winamp.Winamp', {
       iconCls: 'x-fa fa-step-backward'
     }, {
       iconCls: 'x-fa fa-play',
-      handler: 'hello' // TODO listen to event in controller
+      handler: 'playSound' // TODO listen to event in controller
     }, {
-      iconCls: 'x-fa fa-pause'
+      iconCls: 'x-fa fa-pause',
+      handler: 'stopPlay'
     }, {
       iconCls: 'x-fa fa-stop'
     }, {
@@ -47,93 +48,29 @@ Ext.define('Playground.view.winamp.Winamp', {
        align: 'stretch'
      },
     items: [{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
     },{
-      xtype: 'slider',
-      value: 50,
-      increment: 10,
-      minValue: 0,
-      maxValue: 100,
-      vertical: true,
-      height: 100
+      xtype: 'bnz-winampslider'
+    },{
+      xtype: 'bnz-winampslider'
     }]
   }, {
     xtype: 'panel',
