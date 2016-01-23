@@ -7,7 +7,8 @@ Ext.define('Playground.view.winamp.Winamp', {
 
     'Playground.view.winamp.WinampController',
     'Playground.view.winamp.WinampModel',
-    'Playground.view.winamp.slider.Vslider'
+    'Playground.view.winamp.slider.Vslider',
+    'Playground.view.winamp.playlist.Playlist'
   ],
 
   controller: 'winamp-main',
@@ -73,10 +74,7 @@ Ext.define('Playground.view.winamp.Winamp', {
       xtype: 'bnz-winampslider'
     }]
   }, {
-    xtype: 'panel',
-    title: 'WINAMP PLAYLIST',
-    border: 1,
-    reference: 'winamp-playlist'
+    xtype: 'bnz-winamp-playlist'    
   }],
 
   initComponent: function() {
