@@ -73,36 +73,12 @@ Ext.define('Playground.view.main.Main', {
 
   items: [{
       title: 'Winamp',
-      //  iconCls: 'fa-music',
       items: [
-        /* {
-              xtype: 'mainlist'
-          },*/
         {
           xtype: 'bnz-winamp'
 
         }
       ]
     }
-    /*, {
-    title: 'Users',
-    iconCls: 'fa-user',
-    bind: {
-      html: '{loremIpsum}'
-    }
-  }, {
-    title: 'Groups',
-    iconCls: 'fa-users',
-    bind: {
-      html: '{loremIpsum}'
-    }
-  }, {
-    title: 'Settings',
-    iconCls: 'fa-cog',
-    bind: {
-      html: '{loremIpsum}'
-    }
-  }
-*/
   ]
 });

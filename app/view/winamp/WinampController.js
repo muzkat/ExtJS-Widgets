@@ -50,7 +50,7 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   initSoundcloud: function() {
     SC.initialize({
-      client_id: '40493f5d7f709a9881675e26c824b136',
+      client_id: '40493f5d7f709a9881675e26c824b136'
     })
   },
 
@@ -66,6 +66,14 @@ Ext.define('Playground.view.winamp.WinampController', {
   soundcloud: function() {
     me = this;
     var scurl = 'https://soundcloud.com/bnzlovesyou/daktari-preview';
+
+    SC.get('/tracks', {
+      q: 'buskers', license: 'cc-by-sa'
+    }).then(function(tracks) {
+      console.log(tracks);
+      var store = Ext.data.StoreManager.lookup('playList')
+      store.add(tracks);
+    });
 
     SC.get('/resolve', {
       url: scurl

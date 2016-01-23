@@ -17,7 +17,7 @@ Ext.define('Playground.view.winamp.Winamp', {
   title: 'Multimedia Player',
   header: false,
   width: 600,
-  height: 500,
+  height: 'auto',
   border: 0,
   items: [{
     xtype: 'panel',
@@ -48,6 +48,13 @@ Ext.define('Playground.view.winamp.Winamp', {
        type: 'hbox',
        align: 'stretch'
      },
+    tbar: [{
+      text: 'ON'
+    },
+    {
+      text: 'AUTO'
+    }
+  ],
     items: [{
       xtype: 'bnz-winampslider'
     },{
@@ -73,12 +80,12 @@ Ext.define('Playground.view.winamp.Winamp', {
     },{
       xtype: 'bnz-winampslider'
     }]
-  }, {
-    xtype: 'bnz-winamp-playlist'    
+  },
+  {
+    xtype: 'bnz-winamp-playlist'
   }],
 
   initComponent: function() {
-    //this.getController().hello();
-    this.callParent();
+    this.callParent();    
   }
 });
