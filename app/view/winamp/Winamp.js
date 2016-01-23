@@ -4,9 +4,10 @@ Ext.define('Playground.view.winamp.Winamp', {
 
   requires: [
     'Ext.panel.Panel',
+    'Ext.slider.Single',
 
     'Playground.view.winamp.WinampController',
-    'Playground.view.winamp.WinampModel',
+    'Playground.view.winamp.WinampModel'
   ],
 
   controller: 'winamp-main',
@@ -26,7 +27,7 @@ Ext.define('Playground.view.winamp.Winamp', {
       iconCls: 'x-fa fa-step-backward'
     }, {
       iconCls: 'x-fa fa-play',
-      handler: 'hello'                // TODO listen to event in controller
+      handler: 'hello' // TODO listen to event in controller
     }, {
       iconCls: 'x-fa fa-pause'
     }, {
@@ -40,7 +41,100 @@ Ext.define('Playground.view.winamp.Winamp', {
     xtype: 'panel',
     title: 'WINAMP EQUALIZER',
     border: 1,
-    reference: 'winamp-eq'
+    reference: 'winamp-eq',
+    layout: {
+       type: 'hbox',
+       align: 'stretch'
+     },
+    items: [{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    },{
+      xtype: 'slider',
+      value: 50,
+      increment: 10,
+      minValue: 0,
+      maxValue: 100,
+      vertical: true,
+      height: 100
+    }]
   }, {
     xtype: 'panel',
     title: 'WINAMP PLAYLIST',
@@ -48,7 +142,7 @@ Ext.define('Playground.view.winamp.Winamp', {
     reference: 'winamp-playlist'
   }],
 
-  initComponent: function(){
+  initComponent: function() {
     //this.getController().hello();
     this.callParent();
   }

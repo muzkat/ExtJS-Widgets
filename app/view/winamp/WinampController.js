@@ -8,7 +8,6 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   init: function(view){
     this.audioContext = new AudioContext();
-    this.source = this.audioContext.createBufferSource(),
     this.gainNode = this.audioContext.createGain();
   },
 
@@ -43,6 +42,7 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   playSound: function(sample) {
     //TODO move to somehow audio setup function
+    this.source = this.audioContext.createBufferSource(),
     this.source.connect(this.gainNode);
     this.gainNode.gain.value = 0.5;
     this.gainNode.connect(this.audioContext.destination);
