@@ -25,7 +25,8 @@ Ext.define('Playground.view.winamp.Winamp', {
     bbar: [{
       iconCls: 'x-fa fa-step-backward'
     }, {
-      iconCls: 'x-fa fa-play'
+      iconCls: 'x-fa fa-play',
+      handler: 'hello'                // TODO listen to event in controller
     }, {
       iconCls: 'x-fa fa-pause'
     }, {
@@ -48,8 +49,7 @@ Ext.define('Playground.view.winamp.Winamp', {
   }],
 
   initComponent: function(){
-    // Ext.log('test');
-    this.getController().hello();
+    //this.getController().hello();
     this.callParent();
   }
 });
