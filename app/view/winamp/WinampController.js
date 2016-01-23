@@ -2,6 +2,16 @@ Ext.define('Playground.view.winamp.WinampController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.winamp-main',
 
+  audioContext: undefined,
+  source: undefined,
+  gainNode: undefined,
+
+  init: function(view){
+    this.audioContext = new AudioContext();
+    this.source = this.audioContext.createBufferSource(),
+    this.gainNode = this.audioContext.createGain();
+  },
+
   hello: function() {
     me = this;
     Ext.Loader.loadScript({
@@ -32,13 +42,12 @@ Ext.define('Playground.view.winamp.WinampController', {
   },
 
   playSound: function(sample) {
-    var audioContext = new AudioContext(),
-    source = audioContext.createBufferSource(),
-    gainNode = audioContext.createGain();
-
-    source.connect(gainNode);
-    gainNode.gain.value = 0.5;
-    gainNode.connect(audioContext.destination);
+    //TODO move to somehow audio setup function
+    this.source.connect(this.gainNode);
+    this.gainNode.gain.value = 0.5;
+    this.gainNode.connect(this.audioContext.destination);
+    me = this.audioContext;
+    source = this.source;
 
     var url = new URL(sample + '?client_id=17a992358db64d99e492326797fff3e8');
 
@@ -47,7 +56,7 @@ Ext.define('Playground.view.winamp.WinampController', {
       request.responseType = "arraybuffer";
 
     request.onload = function() {
-      audioContext.decodeAudioData(request.response,
+      me.decodeAudioData(request.response,
         function(buffer) {
           console.log("sample loaded!");
           sample.loaded = true;
