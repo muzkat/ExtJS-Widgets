@@ -31,12 +31,7 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
   }, {
     dataIndex: 'duration',
     renderer: function(value, meta, record) {
-      var millis = value;
-      var hours = Math.floor(millis / 36e5),
-        mins = Math.floor((millis % 36e5) / 6e4),
-        secs = Math.floor((millis % 6e4) / 1000);
-      value = hours + ':' + mins + ':' + secs;
-      return value;
+      return Playground.view.winamp.Util.createhmsString(value);
     }
   }],
 

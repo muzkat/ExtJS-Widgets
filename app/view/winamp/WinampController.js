@@ -7,28 +7,34 @@ Ext.define('Playground.view.winamp.WinampController', {
   gainNode: undefined,
 
   control: {
-    slider: {
+    'bnz-winampslider': {
       change: 'onSliderMove'
     },
-    grid: {
+  //  'bnz-hslider': {
+  //    change: 'setVolume'
+  //  },
+    '#volumeSilder':{
+      change: 'setVolume'
+    },grid: {
       itemdblclick: 'onItemClick'
     }
   },
 
   onItemClick: function(view, record, item, index, e, eOpts) {
     me = this;
-    Ext.log({dump: view});
-    Ext.log(record.data.stream_url);
-    Ext.log({dump: item});
-    Ext.log({dump: index});
-    Ext.log({dump: e});
-    Ext.log({dump: eOpts});
+    // Ext.log({dump: view});
+    Ext.log({dump:record.data});
+    //Ext.log({dump: item});
+    //Ext.log({dump: index});
+    // Ext.log({dump: e});
+    // Ext.log({dump: eOpts});
     me.setActualTrack(record.data);
   },
 
   setActualTrack: function(TrackInfo){
     this.source.stop();
     me.getView().getViewModel().set("actualTrack", TrackInfo);
+    me.getView().getViewModel().set("actualhms", Playground.view.winamp.Util.createhmsString(TrackInfo.duration));
     this.getData(TrackInfo.stream_url);
   },
 
@@ -39,12 +45,19 @@ Ext.define('Playground.view.winamp.WinampController', {
     Ext.log({dump: eOpts});
   },
 
+  setVolume: function(cmp, x, y, eOpts){
+    this.gainNode.gain.value = x/100;
+  },
+
+  volumeReset: function(){
+    this.gainNode.gain.value = 0.5;
+  },
 
   init: function(view) {
     this.audioContext = new AudioContext(),
-      this.gainNode = this.audioContext.createGain();
-    this.gainNode.connect(this.audioContext.destination);
+    this.gainNode = this.audioContext.createGain();
     this.gainNode.gain.value = 0.5;
+    this.gainNode.connect(this.audioContext.destination);
 
     me = this;
     Ext.Loader.loadScript({
@@ -77,21 +90,20 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   soundcloud: function() {
     me = this;
-
-    var scurl = 'https://soundcloud.com/bnzlovesyou/daktari-preview';
-
-    SC.get('/users/1672444/tracks', {
+    pl =  Playground.view.winamp.Util.initialPlaylist;
+    SC.get(pl, {
       // q: 'buskers', license: 'cc-by-sa'
     }).then(function(tracks) {
-      console.log(tracks);
+      // console.log(tracks);
       var store = Ext.data.StoreManager.lookup('playList');
       store.add(tracks);
     });
-
+    url = Playground.view.winamp.Util.welcomeTrack;
     SC.get('/resolve', {
-      url: scurl
+      url: url
     }).then(function(sound) {
       me.getView().getViewModel().set("actualTrack", sound);
+      me.getView().getViewModel().set("actualhms", Playground.view.winamp.Util.createhmsString(sound.duration));
       me.getData(sound.stream_url);
     });
   },
@@ -100,7 +112,7 @@ Ext.define('Playground.view.winamp.WinampController', {
     me = this.audioContext;
 
     source = me.createBufferSource(),
-      this.source = source;
+    this.source = source;
     source.connect(this.gainNode);
 
     var url = new URL(sample + '?client_id=17a992358db64d99e492326797fff3e8');

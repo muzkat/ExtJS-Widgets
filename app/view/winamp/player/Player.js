@@ -24,7 +24,9 @@ Ext.define('Playground.view.winamp.player.Player', {
         align: 'left'
       },
       items: [{
-        title: 'Column 1',
+        bind: {
+          title: '{actualhms}'
+        },
         columnWidth: 0.25
       }, {
         columnWidth: 0.75,
@@ -55,7 +57,9 @@ Ext.define('Playground.view.winamp.player.Player', {
         },
         items: [{
           xtype: 'bnz-hslider',
-          flex: 2
+          itemId: 'volumeSilder',
+          flex: 2,
+          listener: {change: 'setVolume'}
         }, {
           xtype: 'bnz-hslider',
           flex: 1

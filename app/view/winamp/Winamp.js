@@ -9,7 +9,8 @@ Ext.define('Playground.view.winamp.Winamp', {
     'Playground.view.winamp.WinampModel',
     'Playground.view.winamp.player.Player',
     'Playground.view.winamp.slider.Vslider',
-    'Playground.view.winamp.playlist.Playlist'
+    'Playground.view.winamp.playlist.Playlist',
+    'Playground.view.winamp.Util'
   ],
 
   controller: 'winamp-main',
