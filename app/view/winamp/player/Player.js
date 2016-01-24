@@ -32,7 +32,9 @@ Ext.define('Playground.view.winamp.player.Player', {
         width: '100%',
         height: '100%',
         allowBlank: true,
-        bind:{ value: '{actualTrack.title}' }
+        bind: {
+          value: '{actualTrack.title}'
+        }
       }]
     }, {
       xtype: 'panel',
@@ -46,18 +48,35 @@ Ext.define('Playground.view.winamp.player.Player', {
         title: 'Column 1',
         columnWidth: 0.25
       }, {
-        title: 'Column 2',
-        columnWidth: 0.55
+        columnWidth: 0.55,
+        layout: {
+          type: 'hbox',
+          align: 'stretch'
+        },
+        items: [{
+          xtype: 'bnz-hslider',
+          flex: 2
+        }, {
+          xtype: 'bnz-hslider',
+          flex: 1
+        }]
       }, {
-        title: 'Column 3',
-        columnWidth: 0.20
+        columnWidth: 0.20,
+        items: [{
+          text: 'EQ',
+          xtype: 'button'
+        }, {
+          text: 'PL',
+          xtype: 'button'
+        }]
       }]
     }, {
       xtype: 'panel',
       header: false,
       border: false,
       items: [{
-        xtype: 'bnz-hslider'
+        xtype: 'bnz-hslider',
+        width: '100%'
       }]
     }]
   }],

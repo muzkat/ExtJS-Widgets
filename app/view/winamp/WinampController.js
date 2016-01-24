@@ -9,22 +9,34 @@ Ext.define('Playground.view.winamp.WinampController', {
   control: {
     slider: {
       change: 'onSliderMove'
+    },
+    grid: {
+      itemdblclick: 'onItemClick'
     }
   },
 
+  onItemClick: function(view, record, item, index, e, eOpts) {
+    me = this;
+    Ext.log({dump: view});
+    Ext.log(record.data.stream_url);
+    Ext.log({dump: item});
+    Ext.log({dump: index});
+    Ext.log({dump: e});
+    Ext.log({dump: eOpts});
+    me.setActualTrack(record.data);
+  },
+
+  setActualTrack: function(TrackInfo){
+    this.source.stop();
+    me.getView().getViewModel().set("actualTrack", TrackInfo);
+    this.getData(TrackInfo.stream_url);
+  },
+
   onSliderMove: function(cmp, x, y, eOpts) {
-    Ext.log({
-      dump: cmp
-    });
-    Ext.log({
-      dump: x
-    });
-    Ext.log({
-      dump: y
-    });
-    Ext.log({
-      dump: eOpts
-    });
+    Ext.log({dump: cmp});
+    Ext.log({dump: x});
+    Ext.log({dump: y});
+    Ext.log({dump: eOpts});
   },
 
 
@@ -68,11 +80,11 @@ Ext.define('Playground.view.winamp.WinampController', {
 
     var scurl = 'https://soundcloud.com/bnzlovesyou/daktari-preview';
 
-    SC.get('/tracks', {
-      q: 'buskers', license: 'cc-by-sa'
+    SC.get('/users/1672444/tracks', {
+      // q: 'buskers', license: 'cc-by-sa'
     }).then(function(tracks) {
       console.log(tracks);
-      var store = Ext.data.StoreManager.lookup('playList')
+      var store = Ext.data.StoreManager.lookup('playList');
       store.add(tracks);
     });
 

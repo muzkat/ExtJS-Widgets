@@ -10,6 +10,5 @@ Ext.define('Playground.view.winamp.slider.Hslider', {
   increment: 10,
   minValue: 0,
   maxValue: 100,
-  vertical: false,
-  width: '100%'
+  vertical: false
 });
