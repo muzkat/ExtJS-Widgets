@@ -65,6 +65,7 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   soundcloud: function() {
     me = this;
+
     var scurl = 'https://soundcloud.com/bnzlovesyou/daktari-preview';
 
     SC.get('/tracks', {
@@ -78,6 +79,7 @@ Ext.define('Playground.view.winamp.WinampController', {
     SC.get('/resolve', {
       url: scurl
     }).then(function(sound) {
+      me.getView().getViewModel().set("actualTrack", sound);
       me.getData(sound.stream_url);
     });
   },

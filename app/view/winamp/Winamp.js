@@ -7,6 +7,7 @@ Ext.define('Playground.view.winamp.Winamp', {
 
     'Playground.view.winamp.WinampController',
     'Playground.view.winamp.WinampModel',
+    'Playground.view.winamp.player.Player',
     'Playground.view.winamp.slider.Vslider',
     'Playground.view.winamp.playlist.Playlist'
   ],
@@ -20,25 +21,7 @@ Ext.define('Playground.view.winamp.Winamp', {
   height: 'auto',
   border: 0,
   items: [{
-    xtype: 'panel',
-    title: 'WINAMP',
-    border: 1,
-    reference: 'winamp-player',
-    bbar: [{
-      iconCls: 'x-fa fa-step-backward'
-    }, {
-      iconCls: 'x-fa fa-play',
-      handler: 'playSound' // TODO listen to event in controller
-    }, {
-      iconCls: 'x-fa fa-pause',
-      handler: 'stopPlay'
-    }, {
-      iconCls: 'x-fa fa-stop'
-    }, {
-      iconCls: 'x-fa fa-step-forward'
-    }, {
-      iconCls: 'x-fa fa-eject'
-    }]
+    xtype: 'bnz-player'
   }, {
     xtype: 'panel',
     title: 'WINAMP EQUALIZER',
@@ -55,6 +38,9 @@ Ext.define('Playground.view.winamp.Winamp', {
       text: 'AUTO'
     }
   ],
+  defaults: { // defaults are applied to items, not the container
+      //flex: 1
+  },
     items: [{
       xtype: 'bnz-winampslider'
     },{
@@ -86,6 +72,6 @@ Ext.define('Playground.view.winamp.Winamp', {
   }],
 
   initComponent: function() {
-    this.callParent();    
+    this.callParent();
   }
 });

@@ -1,6 +1,6 @@
-Ext.define('Playground.view.winamp.slider.Vslider', {
+Ext.define('Playground.view.winamp.slider.Hslider', {
   extend: 'Ext.slider.Single',
-  alias: 'widget.bnz-winampslider',
+  alias: 'widget.bnz-hslider',
 
   requires: [
     'Ext.slider.Single'
@@ -10,6 +10,6 @@ Ext.define('Playground.view.winamp.slider.Vslider', {
   increment: 10,
   minValue: 0,
   maxValue: 100,
-  vertical: true,
-  height: 100  
+  vertical: false,
+  width: '100%'
 });
