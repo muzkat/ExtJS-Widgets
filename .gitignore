@@ -1,3 +1,4 @@
-/build/
+/build/temp/
+/build/development/
 /modern/
 /ext/

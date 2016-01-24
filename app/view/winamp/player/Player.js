@@ -58,8 +58,7 @@ Ext.define('Playground.view.winamp.player.Player', {
         items: [{
           xtype: 'bnz-hslider',
           itemId: 'volumeSilder',
-          flex: 2,
-          listener: {change: 'setVolume'}
+          flex: 2
         }, {
           xtype: 'bnz-hslider',
           flex: 1

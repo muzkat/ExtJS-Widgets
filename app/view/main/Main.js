@@ -7,14 +7,10 @@ Ext.define('Playground.view.main.Main', {
     'Ext.window.MessageBox',
     'Ext.panel.Panel',
 
-    'Playground.view.main.MainController',
     'Playground.view.main.MainModel',
-    'Playground.view.main.List',
-
     'Playground.view.winamp.Winamp'
   ],
 
-  controller: 'main',
   viewModel: 'main',
 
   ui: 'navigation',
@@ -74,10 +70,7 @@ Ext.define('Playground.view.main.Main', {
   items: [{
       title: 'Winamp',
       items: [
-        {
-          xtype: 'bnz-winamp'
-
-        }
+        {xtype: 'bnz-winamp'}
       ]
     }
   ]
