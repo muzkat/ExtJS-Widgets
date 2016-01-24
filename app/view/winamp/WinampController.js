@@ -10,46 +10,51 @@ Ext.define('Playground.view.winamp.WinampController', {
     'bnz-winampslider': {
       change: 'onSliderMove'
     },
-  //  'bnz-hslider': {
-  //    change: 'setVolume'
-  //  },
-    '#volumeSilder':{
+    //  'bnz-hslider': {
+    //    change: 'setVolume'
+    //  },
+    '#volumeSilder': {
       change: 'setVolume'
-    },grid: {
+    },
+    grid: {
       itemdblclick: 'onItemClick'
     }
   },
 
   onItemClick: function(view, record, item, index, e, eOpts) {
     me = this;
-    // Ext.log({dump: view});
-    Ext.log({dump:record.data});
-    //Ext.log({dump: item});
-    //Ext.log({dump: index});
-    // Ext.log({dump: e});
-    // Ext.log({dump: eOpts});
     me.setActualTrack(record.data);
   },
 
-  setActualTrack: function(TrackInfo){
-    this.source.stop();
+  setActualTrack: function(TrackInfo) {
+    if(this.source != undefined){
+      this.source.stop();
+    }
     me.getView().getViewModel().set("actualTrack", TrackInfo);
     me.getView().getViewModel().set("actualhms", Playground.view.winamp.Util.createhmsString(TrackInfo.duration));
     this.getData(TrackInfo.stream_url);
   },
 
   onSliderMove: function(cmp, x, y, eOpts) {
-    Ext.log({dump: cmp});
-    Ext.log({dump: x});
-    Ext.log({dump: y});
-    Ext.log({dump: eOpts});
+    Ext.log({
+      dump: cmp
+    });
+    Ext.log({
+      dump: x
+    });
+    Ext.log({
+      dump: y
+    });
+    Ext.log({
+      dump: eOpts
+    });
   },
 
-  setVolume: function(cmp, x, y, eOpts){
-    this.gainNode.gain.value = x/100;
+  setVolume: function(cmp, x, y, eOpts) {
+    this.gainNode.gain.value = x / 100;
   },
 
-  volumeReset: function(){
+  volumeReset: function() {
     this.gainNode.gain.value = 0.5;
   },
 
@@ -76,7 +81,12 @@ Ext.define('Playground.view.winamp.WinampController', {
   initSoundcloud: function() {
     SC.initialize({
       client_id: '40493f5d7f709a9881675e26c824b136'
-    })
+    });
+
+    SC.get(Playground.view.winamp.Util.initialPlaylist).then(function(tracks) {
+      var store = Ext.data.StoreManager.lookup('playList');
+      store.add(tracks);
+    });
   },
 
   stopPlay: function() {
@@ -90,14 +100,6 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   soundcloud: function() {
     me = this;
-    pl =  Playground.view.winamp.Util.initialPlaylist;
-    SC.get(pl, {
-      // q: 'buskers', license: 'cc-by-sa'
-    }).then(function(tracks) {
-      // console.log(tracks);
-      var store = Ext.data.StoreManager.lookup('playList');
-      store.add(tracks);
-    });
     url = Playground.view.winamp.Util.welcomeTrack;
     SC.get('/resolve', {
       url: url
