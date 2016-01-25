@@ -6,15 +6,20 @@ Ext.define('Playground.view.winamp.WinampController', {
   source: undefined,
   gainNode: undefined,
 
+  mainFilter: undefined,
+
   control: {
     'bnz-winampslider': {
       change: 'onSliderMove'
     },
-    //  'bnz-hslider': {
-    //    change: 'setVolume'
-    //  },
+      '#playBtn': {
+        click: 'playSound'
+      },
     '#volumeSilder': {
       change: 'setVolume'
+    },
+    '#freqSilder': {
+      change: 'setMainFilter'
     },
     grid: {
       itemdblclick: 'onItemClick'
@@ -54,6 +59,10 @@ Ext.define('Playground.view.winamp.WinampController', {
     this.gainNode.gain.value = x / 100;
   },
 
+  setMainFilter: function(cmp, x, y, eOpts) {
+    this.mainFilter.frequency.value = x;
+  },
+
   volumeReset: function() {
     this.gainNode.gain.value = 0.5;
   },
@@ -63,6 +72,10 @@ Ext.define('Playground.view.winamp.WinampController', {
     this.gainNode = this.audioContext.createGain();
     this.gainNode.gain.value = 0.5;
     this.gainNode.connect(this.audioContext.destination);
+    this.mainFilter = this.audioContext.createBiquadFilter();
+    this.mainFilter.type = 'lowpass';
+    this.mainFilter.frequency.value = 100;
+    this.mainFilter.connect(this.gainNode);
 
     me = this;
     Ext.Loader.loadScript({
@@ -94,6 +107,12 @@ Ext.define('Playground.view.winamp.WinampController', {
   },
 
   playSound: function() {
+    if(this.source != undefined){
+      this.source.stop();
+      var actualSound = this.getView().getViewModel().get("actualTrack");
+      this.getData(actualSound.stream_url);
+      return;
+    }
     this.soundcloud();
     //source.start(0);
   },
@@ -115,7 +134,8 @@ Ext.define('Playground.view.winamp.WinampController', {
 
     source = me.createBufferSource(),
     this.source = source;
-    source.connect(this.gainNode);
+
+    source.connect(this.mainFilter);
 
     var url = new URL(sample + '?client_id=17a992358db64d99e492326797fff3e8');
 

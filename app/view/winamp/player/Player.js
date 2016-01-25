@@ -89,7 +89,8 @@ Ext.define('Playground.view.winamp.player.Player', {
     iconCls: 'x-fa fa-step-backward'
   }, {
     iconCls: 'x-fa fa-play',
-    handler: 'playSound' // TODO listen to event in controller
+    itemId: 'playBtn'
+//    handler: 'playSound' // TODO listen to event in controller
   }, {
     iconCls: 'x-fa fa-pause',
     handler: 'stopPlay'

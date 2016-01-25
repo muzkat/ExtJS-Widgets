@@ -39,11 +39,13 @@ Ext.define('Playground.view.winamp.Winamp', {
       text: 'AUTO'
     }
   ],
-  defaults: { // defaults are applied to items, not the container
+  defaults: {
+      // defaults are applied to items, not the container
       //flex: 1
   },
     items: [{
-      xtype: 'bnz-winampslider'
+      xtype: 'bnz-winampslider',
+      itemId: 'freqSilder'
     },{
       xtype: 'bnz-winampslider'
     },{
