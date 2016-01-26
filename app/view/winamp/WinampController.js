@@ -5,10 +5,14 @@ Ext.define('Playground.view.winamp.WinampController', {
   audioContext: undefined,
   source: undefined,
   gainNode: undefined,
+  panNode: undefined,
 
   mainFilter: undefined,
 
   control: {
+    tool:{
+      click: 'onCloseClick'
+    },
     'bnz-winampslider': {
       change: 'onSliderMove'
     },
@@ -18,17 +22,73 @@ Ext.define('Playground.view.winamp.WinampController', {
     '#volumeSilder': {
       change: 'setVolume'
     },
+    '#panSlider': {
+      change: 'setPan'
+    },
     '#freqSilder': {
       change: 'setMainFilter'
+    },
+    '#pl': {
+      click: 'showHide'
+    },
+    '#eq': {
+      click: 'showHide'
     },
     grid: {
       itemdblclick: 'onItemClick'
     }
   },
 
+  onCloseClick:function(tool, e, owner, eOpts ){
+      if(!(owner.reference === 'winamp-player')){
+        owner.hide();
+      }
+
+  },
+
+  //TODO refactoring needed
+  showHide: function(cmp){
+    if(cmp.itemId === 'eq'){
+      eq = this.lookupReference('winamp-eq')
+      if (eq.hidden){
+        eq.show();
+      }
+      else {
+        eq.hide();
+      }
+    }
+    if(cmp.itemId === 'pl'){
+      pl = this.lookupReference('winamp-playlist')
+      if (pl.hidden){
+        pl.show();
+      }
+      else {
+        pl.hide();
+      }
+    }
+  },
+
   onItemClick: function(view, record, item, index, e, eOpts) {
     me = this;
     me.setActualTrack(record.data);
+  },
+
+  setPan: function(cmp, x, y, eOpts) {
+    Ext.log({
+      dump: cmp
+    });
+    Ext.log({
+      dump: x
+    });
+    Ext.log({
+      dump: y
+    });
+    Ext.log({
+      dump: eOpts
+    });
+
+    this.panNode.pan.value = x;
+
   },
 
   setActualTrack: function(TrackInfo) {
@@ -75,7 +135,9 @@ Ext.define('Playground.view.winamp.WinampController', {
     this.mainFilter = this.audioContext.createBiquadFilter();
     this.mainFilter.type = 'lowpass';
     this.mainFilter.frequency.value = 100;
-    this.mainFilter.connect(this.gainNode);
+    this.panNode = this.audioContext.createStereoPanner();
+    this.mainFilter.connect(this.panNode);
+    this.panNode.connect(this.gainNode);
 
     me = this;
     Ext.Loader.loadScript({

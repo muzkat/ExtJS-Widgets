@@ -10,6 +10,9 @@ Ext.define('Playground.view.winamp.player.Player', {
   title: 'WINAMP',
   border: 0,
   reference: 'winamp-player',
+  tools: [{
+      type: 'close'
+  }],
 
   items: [{
     xtype: 'panel',
@@ -61,16 +64,23 @@ Ext.define('Playground.view.winamp.player.Player', {
           flex: 2
         }, {
           xtype: 'bnz-hslider',
+          itemId: 'panSlider',
+          value: 0,
+          increment: 1,
+          minValue: -10,
+          maxValue: 10,
           flex: 1
         }]
       }, {
         columnWidth: 0.20,
         items: [{
           text: 'EQ',
-          xtype: 'button'
+          xtype: 'button',
+          itemId: 'eq'
         }, {
           text: 'PL',
-          xtype: 'button'
+          xtype: 'button',
+          itemId: 'pl'
         }]
       }]
     }, {
