@@ -10,6 +10,9 @@ Ext.define('Playground.view.winamp.WinampController', {
   mainFilter: undefined,
 
   control: {
+    tool:{
+      click: 'onCloseClick'
+    },
     'bnz-winampslider': {
       change: 'onSliderMove'
     },
@@ -25,8 +28,43 @@ Ext.define('Playground.view.winamp.WinampController', {
     '#freqSilder': {
       change: 'setMainFilter'
     },
+    '#pl': {
+      click: 'showHide'
+    },
+    '#eq': {
+      click: 'showHide'
+    },
     grid: {
       itemdblclick: 'onItemClick'
+    }
+  },
+
+  onCloseClick:function(tool, e, owner, eOpts ){
+      if(!(owner.reference === 'winamp-player')){
+        owner.hide();
+      }
+
+  },
+
+  //TODO refactoring needed
+  showHide: function(cmp){
+    if(cmp.itemId === 'eq'){
+      eq = this.lookupReference('winamp-eq')
+      if (eq.hidden){
+        eq.show();
+      }
+      else {
+        eq.hide();
+      }
+    }
+    if(cmp.itemId === 'pl'){
+      pl = this.lookupReference('winamp-playlist')
+      if (pl.hidden){
+        pl.show();
+      }
+      else {
+        pl.hide();
+      }
     }
   },
 

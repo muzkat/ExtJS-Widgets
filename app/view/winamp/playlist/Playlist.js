@@ -11,6 +11,9 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
   title: 'WINAMP PLAYLIST',
   border: 1,
   reference: 'winamp-playlist',
+  tools: [{
+      type: 'close'
+  }],
   layout: {
     type: 'fit'
   },

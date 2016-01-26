@@ -10,6 +10,9 @@ Ext.define('Playground.view.winamp.player.Player', {
   title: 'WINAMP',
   border: 0,
   reference: 'winamp-player',
+  tools: [{
+      type: 'close'
+  }],
 
   items: [{
     xtype: 'panel',
@@ -72,10 +75,12 @@ Ext.define('Playground.view.winamp.player.Player', {
         columnWidth: 0.20,
         items: [{
           text: 'EQ',
-          xtype: 'button'
+          xtype: 'button',
+          itemId: 'eq'
         }, {
           text: 'PL',
-          xtype: 'button'
+          xtype: 'button',
+          itemId: 'pl'
         }]
       }]
     }, {

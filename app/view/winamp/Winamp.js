@@ -26,51 +26,51 @@ Ext.define('Playground.view.winamp.Winamp', {
   }, {
     xtype: 'panel',
     title: 'WINAMP EQUALIZER',
+    tools: [{
+      type: 'close'
+    }],
     border: 1,
     reference: 'winamp-eq',
     layout: {
-       type: 'hbox',
-       align: 'stretch'
-     },
+      type: 'hbox',
+      align: 'stretch'
+    },
     tbar: [{
       text: 'ON'
-    },
-    {
+    }, {
       text: 'AUTO'
-    }
-  ],
-  defaults: {
+    }],
+    defaults: {
       // defaults are applied to items, not the container
       //flex: 1
-  },
+    },
     items: [{
       xtype: 'bnz-winampslider',
       itemId: 'freqSilder'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
-    },{
+    }, {
       xtype: 'bnz-winampslider'
     }]
-  },
-  {
+  }, {
     xtype: 'bnz-winamp-playlist'
   }],
 
