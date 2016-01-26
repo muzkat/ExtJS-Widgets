@@ -7,7 +7,7 @@ Ext.define('Playground.view.winamp.player.Player', {
     'Playground.view.winamp.slider.Hslider'
   ],
 
-  title: 'WINAMP',
+  title: Playground.view.winamp.assets.Strings.playerTitle,
   border: 0,
   reference: 'winamp-player',
   tools: [{
@@ -74,11 +74,11 @@ Ext.define('Playground.view.winamp.player.Player', {
       }, {
         columnWidth: 0.20,
         items: [{
-          text: 'EQ',
+          text: Playground.view.winamp.assets.Strings.playerEqBtn,
           xtype: 'button',
           itemId: 'eq'
         }, {
-          text: 'PL',
+          text: Playground.view.winamp.assets.Strings.playerPlBtn,
           xtype: 'button',
           itemId: 'pl'
         }]
