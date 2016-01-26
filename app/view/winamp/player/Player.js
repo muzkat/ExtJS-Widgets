@@ -61,6 +61,11 @@ Ext.define('Playground.view.winamp.player.Player', {
           flex: 2
         }, {
           xtype: 'bnz-hslider',
+          itemId: 'panSlider',
+          value: 0,
+          increment: 1,
+          minValue: -10,
+          maxValue: 10,
           flex: 1
         }]
       }, {
