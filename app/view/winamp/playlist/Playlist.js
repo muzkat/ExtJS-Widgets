@@ -8,7 +8,7 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
     'Ext.grid.plugin.DragDrop'
   ],
 
-  title: 'WINAMP PLAYLIST',
+  title: Playground.view.winamp.assets.Strings.playerTitle+ ' ' + Playground.view.winamp.assets.Strings.playlistTitle,
   border: 1,
   reference: 'winamp-playlist',
   tools: [{
@@ -25,7 +25,7 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
       dragText: 'Drag and drop to reorganize'
     }
   },
-
+  hideHeaders: true,
   columns: [{
     xtype: 'rownumberer'
   }, {
@@ -39,7 +39,14 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
   }],
 
   bbar: [{
-    text: 'ADD'
+    text: 'ADD',
+    menu: [{
+      text: 'ADD URL'
+    },{
+      text: 'ADD LIST'
+    },{
+      text: 'ADD FILE'
+    }]
   }, {
     text: 'REM'
   }, {
