@@ -74,21 +74,7 @@ Ext.define('Playground.view.winamp.WinampController', {
   },
 
   setPan: function(cmp, x, y, eOpts) {
-    Ext.log({
-      dump: cmp
-    });
-    Ext.log({
-      dump: x
-    });
-    Ext.log({
-      dump: y
-    });
-    Ext.log({
-      dump: eOpts
-    });
-
-    this.panNode.pan.value = x;
-
+    this.panNode.pan.value = x/10;
   },
 
   setActualTrack: function(TrackInfo) {
