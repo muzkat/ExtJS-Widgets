@@ -35,8 +35,7 @@ Ext.define('Playground.view.main.Main', {
   tabBar: {
     flex: 1,
     layout: {
-      align: 'stretch',
-      overflowHandler: 'none'
+      align: 'stretch' //,      overflowHandler: 'none'
     }
   },
 
@@ -51,6 +50,7 @@ Ext.define('Playground.view.main.Main', {
 
   defaults: {
     bodyPadding: 20,
+    autoScroll: true,
     tabConfig: {
       plugins: 'responsive',
       responsiveConfig: {
@@ -68,10 +68,14 @@ Ext.define('Playground.view.main.Main', {
   },
 
   items: [{
-      title: 'Winamp',
-      items: [
-        {xtype: 'bnz-winamp'}
-      ]
-    }
-  ]
+    title: 'Webamp',
+    items: [{
+      xtype: 'bnz-winamp'
+    }]
+  }, {
+    title: 'Weather',
+    items: [{
+      xtype: 'bnz-weather'
+    }]
+  }]
 });

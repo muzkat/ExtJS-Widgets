@@ -1,7 +1,7 @@
 Ext.define('Playground.view.winamp.assets.Strings', {
   singleton: true,
 
-  playerTitle: 'WINAMP',
+  playerTitle: 'WEBAMP',
   playerEqBtn: 'EQ',
   playerPlBtn: 'PL',
   playlistTitle: 'PLAYLIST'

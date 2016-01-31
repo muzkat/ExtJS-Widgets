@@ -6,19 +6,25 @@ Ext.define('Playground.view.winamp.WinampController', {
   source: undefined,
   gainNode: undefined,
   panNode: undefined,
+  splitter: undefined,
+  gainL: undefined,
+  gainR: undefined,
+  merger: undefined,
+  balL: undefined,
+  balR: undefined,
 
   mainFilter: undefined,
 
   control: {
-    tool:{
+    tool: {
       click: 'onCloseClick'
     },
     'bnz-winampslider': {
       change: 'onSliderMove'
     },
-      '#playBtn': {
-        click: 'playSound'
-      },
+    '#playBtn': {
+      click: 'playSound'
+    },
     '#volumeSilder': {
       change: 'setVolume'
     },
@@ -34,35 +40,115 @@ Ext.define('Playground.view.winamp.WinampController', {
     '#eq': {
       click: 'showHide'
     },
+    '#LeftRight': {
+      toggle: 'separateChannel'
+    },
+    '#sliderL': {
+      change: 'setLeftGain'
+    },
+    '#sliderR': {
+      change: 'setRightGain'
+    },
+    '#balanceSliderLR':{
+      change: 'changeBalance'
+    },
     grid: {
       itemdblclick: 'onItemClick'
     }
   },
 
-  onCloseClick:function(tool, e, owner, eOpts ){
-      if(!(owner.reference === 'winamp-player')){
-        owner.hide();
-      }
+  onCloseClick: function(tool, e, owner, eOpts) {
+    if (!(owner.reference === 'winamp-player')) {
+      owner.hide();
+    }
 
   },
 
+  defaultRouting: function(){
+  this.merger.disconnect();
+  this.splitter.disconnect();
+  this.mainFilter.connect(this.panNode);
+  this.panNode.connect(this.gainNode);
+  /*
+  this.mainFilter.connect(this.splitter);
+
+
+  this.splitter.connect(this.gainL, 0);
+  this.splitter.connect(this.gainR, 1);
+  this.gainL.connect(this.merger, 0, 0);
+  this.gainR.connect(this.merger, 0, 1);
+
+  this.merger.connect(this.gainNode);
+  */
+  },
+
+  detachDefaultRouting: function(){
+  this.mainFilter.disconnect();
+  this.panNode.disconnect();
+  this.mainFilter.connect(this.splitter);
+
+
+  this.splitter.connect(this.gainL, 0);
+  this.splitter.connect(this.gainR, 1);
+  this.gainL.connect(this.balL);
+  this.gainR.connect(this.balR);
+  this.balL.connect(this.merger, 0, 0)
+  this.balR.connect(this.merger, 0, 1)
+
+  this.merger.connect(this.gainNode);
+  },
+
+  changeBalance: function(cmp, x, y, eOpts){
+    this.detachDefaultRouting();
+   if (x >0 )
+   {this.setLeftGain(0, 10-x)}
+   if (x < 0)
+   { x = Math.abs(x);
+     this.setRightGain(0, 10-x);
+   }
+  },
+
+  setLeftGain: function(cmp, x, y, eOpts) {
+    this.detachDefaultRouting();
+    this.gainL.gain.value = x / 10;
+  },
+
+  setRightGain: function(cmp, x, y, eOpts) {
+    this.detachDefaultRouting();
+    this.gainR.gain.value = x / 10;
+  },
+
+  separateChannel: function(container, button, pressed) {
+    this.detachDefaultRouting();
+    if (button.text === 'LEFT') {
+      this.gainL.gain.value = 1.0;
+      this.gainR.gain.value = 0.0;
+    }
+    if (button.text === 'RIGHT') {
+      this.gainL.gain.value = 0.0;
+      this.gainR.gain.value = 1.0;
+    }
+    if (button.text === 'BOTH') {
+      this.gainL.gain.value = 1.0;
+      this.gainR.gain.value = 1.0;
+    }
+  },
+
   //TODO refactoring needed
-  showHide: function(cmp){
-    if(cmp.itemId === 'eq'){
+  showHide: function(cmp) {
+    if (cmp.itemId === 'eq') {
       eq = this.lookupReference('winamp-eq')
-      if (eq.hidden){
+      if (eq.hidden) {
         eq.show();
-      }
-      else {
+      } else {
         eq.hide();
       }
     }
-    if(cmp.itemId === 'pl'){
+    if (cmp.itemId === 'pl') {
       pl = this.lookupReference('winamp-playlist')
-      if (pl.hidden){
+      if (pl.hidden) {
         pl.show();
-      }
-      else {
+      } else {
         pl.hide();
       }
     }
@@ -74,11 +160,12 @@ Ext.define('Playground.view.winamp.WinampController', {
   },
 
   setPan: function(cmp, x, y, eOpts) {
-    this.panNode.pan.value = x/10;
+    this.defaultRouting();
+    this.panNode.pan.value = x / 10;
   },
 
   setActualTrack: function(TrackInfo) {
-    if(this.source != undefined){
+    if (this.source != undefined) {
       this.source.stop();
     }
     me.getView().getViewModel().set("actualTrack", TrackInfo);
@@ -87,18 +174,10 @@ Ext.define('Playground.view.winamp.WinampController', {
   },
 
   onSliderMove: function(cmp, x, y, eOpts) {
-    Ext.log({
-      dump: cmp
-    });
-    Ext.log({
-      dump: x
-    });
-    Ext.log({
-      dump: y
-    });
-    Ext.log({
-      dump: eOpts
-    });
+    Ext.log({dump: cmp });
+    Ext.log({dump: x});
+    Ext.log({dump: y});
+    Ext.log({dump: eOpts});
   },
 
   setVolume: function(cmp, x, y, eOpts) {
@@ -115,15 +194,38 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   init: function(view) {
     this.audioContext = new AudioContext(),
-    this.gainNode = this.audioContext.createGain();
+    this.gainR = this.audioContext.createGain(),
+    this.gainL = this.audioContext.createGain(),
+    this.balR = this.audioContext.createGain(),
+    this.balL = this.audioContext.createGain(),
+    this.gainNode = this.audioContext.createGain(),
+    this.merger = this.audioContext.createChannelMerger(2),
+    this.mainFilter = this.audioContext.createBiquadFilter(),
+    this.panNode = this.audioContext.createStereoPanner(),
+    this.splitter = this.audioContext.createChannelSplitter(2);
+
+
+
     this.gainNode.gain.value = 0.5;
+
+    this.gainR.gain.value = 0.5;
+    this.gainL.gain.value = 0.5;
+
+    this.balR.gain.value = 1;
+    this.balL.gain.value = 1;
+
     this.gainNode.connect(this.audioContext.destination);
-    this.mainFilter = this.audioContext.createBiquadFilter();
+
     this.mainFilter.type = 'lowpass';
     this.mainFilter.frequency.value = 100;
-    this.panNode = this.audioContext.createStereoPanner();
+
+
+    //  this.splitter.connect(this.merger, 1, 0);
+
     this.mainFilter.connect(this.panNode);
     this.panNode.connect(this.gainNode);
+    //    this.gainR.connect(this.audioContext.destination)
+    //    this.splitter.connect(this.gainNode,0);
 
     me = this;
     Ext.Loader.loadScript({
@@ -155,7 +257,7 @@ Ext.define('Playground.view.winamp.WinampController', {
   },
 
   playSound: function() {
-    if(this.source != undefined){
+    if (this.source != undefined) {
       this.source.stop();
       var actualSound = this.getView().getViewModel().get("actualTrack");
       this.getData(actualSound.stream_url);
