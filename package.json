@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/muzkat/ExtJS-Widgets/issues"
   },
-  "homepage": "https://github.com/muzkat/ExtJS-Widgets#readme"
+  "homepage": "https://github.com/muzkat/ExtJS-Widgets#readme",
+  "dependencies": {
+    "muzkat-ext-app": "^1.0.5"
+  },
+  "devDependencies": {
+    "express": "^4.16.2",
+    "browserify": "^15.2.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.2.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0"
+  }
 }
