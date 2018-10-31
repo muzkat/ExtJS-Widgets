@@ -2,15 +2,6 @@ Ext.define('Playground.view.main.Main', {
   extend: 'Ext.tab.Panel',
   xtype: 'app-main',
 
-  requires: [
-    'Ext.plugin.Viewport',
-    'Ext.window.MessageBox',
-    'Ext.panel.Panel',
-
-    'Playground.view.main.MainModel',
-    'Playground.view.winamp.Winamp'
-  ],
-
   viewModel: 'main',
 
   ui: 'navigation',

@@ -2,11 +2,6 @@ Ext.define('Playground.view.winamp.player.Player', {
   extend: 'Ext.panel.Panel',
   alias: 'widget.bnz-player',
 
-  requires: ['Ext.panel.Panel',
-    'Ext.layout.*',
-    'Playground.view.winamp.slider.Hslider'
-  ],
-
   title: Playground.view.winamp.assets.Strings.playerTitle,
   border: 0,
   reference: 'winamp-player',
