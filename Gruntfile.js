@@ -1,6 +1,6 @@
 module.exports = function (grunt) {
 
-    var projectRoot = 'app/';
+    var projectRoot = 'src/';
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -26,7 +26,7 @@ module.exports = function (grunt) {
 
         browserify : {
             dev : {
-                src : ['src/app/**/*.js'],
+                src : ['src/src/**/*.js'],
                 dest : './public/js/bundle.js',
                 options : {
                     // watch : true, // use watchify for incremental builds!
