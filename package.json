@@ -1,0 +1,19 @@
+{
+  "name": "muzkat-ext-widgets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muzkat/ExtJS-Widgets.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/muzkat/ExtJS-Widgets/issues"
+  },
+  "homepage": "https://github.com/muzkat/ExtJS-Widgets#readme"
+}
