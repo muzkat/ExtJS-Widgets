@@ -5,13 +5,26 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         concat: {
-            map: {
+            app: {
                 src: [
-                    projectRoot + '**/*.js'
+                    projectRoot + 'main/**/*.js'
                 ],
-                dest: 'public/js/widgetdemos.debug.js'
+                dest: 'build/js/app.debug.js'
+            },
+            weather: {
+                src: [
+                    projectRoot + 'widgets/weather/**/*.js'
+                ],
+                dest: 'build/js/weather.debug.js'
+            },
+            winamp: {
+                src: [
+                    projectRoot + 'widgets/winamp/**/*.js'
+                ],
+                dest: 'build/js/winamp.debug.js'
             }
         },
+
         watch: {
             scripts: {
                 files: ['src/**/*.js', 'public/**/*.html'],
