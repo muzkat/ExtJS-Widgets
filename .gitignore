@@ -1,4 +1,4 @@
-/build/temp/
-/build/development/
-/modern/
-/ext/
+.idea/
+.idea
+node_modules/
+node_modules
