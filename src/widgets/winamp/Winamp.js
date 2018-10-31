@@ -2,19 +2,6 @@ Ext.define('Playground.view.winamp.Winamp', {
   extend: 'Ext.panel.Panel',
   xtype: 'bnz-winamp',
 
-  requires: [
-    'Ext.panel.Panel',
-
-    'Playground.view.winamp.WinampController',
-    'Playground.view.winamp.WinampModel',
-    'Playground.view.winamp.player.Player',
-    'Playground.view.winamp.slider.Vslider',
-    'Playground.view.winamp.slider.Hslider',
-    'Playground.view.winamp.playlist.Playlist',
-    'Playground.view.winamp.Util',
-    'Playground.view.winamp.assets.*'
-  ],
-
   controller: 'winamp-main',
   viewModel: 'winamp-main',
 

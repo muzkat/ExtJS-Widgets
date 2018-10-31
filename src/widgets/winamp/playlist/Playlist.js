@@ -2,12 +2,6 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.bnz-winamp-playlist',
 
-  requires: [
-    'Ext.grid.Panel',
-    'Ext.data.Store',
-    'Ext.grid.plugin.DragDrop'
-  ],
-
   title: Playground.view.winamp.assets.Strings.playerTitle+ ' ' + Playground.view.winamp.assets.Strings.playlistTitle,
   border: 1,
   reference: 'winamp-playlist',

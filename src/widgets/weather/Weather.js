@@ -2,10 +2,6 @@ Ext.define('Playground.view.weather.Weather', {
   extend: 'Ext.panel.Panel',
   xtype: 'bnz-weather',
 
-  requires: [
-    'Ext.panel.Panel'
-  ],
-
   controller: 'weather-main',
   viewModel: 'weather-main',
 
