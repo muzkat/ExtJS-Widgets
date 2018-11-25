@@ -22,6 +22,12 @@ module.exports = function (grunt) {
                     projectRoot + 'widgets/winamp/**/*.js'
                 ],
                 dest: 'build/js/winamp.debug.js'
+            },
+            json: {
+                src: [
+                    projectRoot + 'widgets/jsonviewer/**/*.js'
+                ],
+                dest: 'build/js/jsonviewer.debug.js'
             }
         },
 
@@ -39,7 +45,7 @@ module.exports = function (grunt) {
 
         browserify : {
             dev : {
-                src : ['build/js/winamp.debug.js', 'build/js/weather.debug.js', 'build/js/app.debug.js', 'src/wrapper/wrapper.js'],
+                src : ['build/js/winamp.debug.js', 'build/js/weather.debug.js', 'build/js/jsonviewer.debug.js', 'build/js/app.debug.js', 'src/wrapper/wrapper.js'],
                 dest : './public/js/bundle.js',
                 options : {
                     // watch : true, // use watchify for incremental builds!

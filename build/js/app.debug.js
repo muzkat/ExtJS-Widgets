@@ -1,38 +1,44 @@
 Ext.define('Playground.view.main.Main', {
-  extend: 'Ext.tab.Panel',
-  alias: 'widget.app-main',
+    extend: 'Ext.tab.Panel',
+    alias: 'widget.app-main',
 
-  viewModel: 'main',
+    titleRotation: 0,
+    tabRotation: 0,
 
-  titleRotation: 0,
-  tabRotation: 0,
+    defaults: {
+        xtype: 'panel',
+        layout: 'center'
+    },
 
-  items: [{
-    title: 'Webamp',
-    items: [{
-      xtype: 'bnz-winamp'
-    }]
-  }, {
-    title: 'Weather',
-    items: [{
-      xtype: 'bnz-weather'
-    }]
-  }]
-});
+    items: [],
 
-/**
- * This class is the widgets model for the Main widgets of the application.
- */
-Ext.define('Playground.view.main.MainModel', {
-    extend: 'Ext.app.ViewModel',
+    initComponent: function () {
 
-    alias: 'viewmodel.main',
+        var cmpDefinitions = [{
+            title: 'Webamp',
+            iconCls: 'fas fa-play',
+            items: [{
+                xtype: 'bnz-winamp'
+            }]
+        }, {
+            title: 'Weather',
+            iconCls: 'fas fa-sun',
+            items: [{
+                xtype: 'bnz-weather'
+            }]
+        }, {
+            title: 'JSONViewer Online',
+            iconCls: 'fas fa-edit',
+            items: [{
+                xtype: 'devbnzJsonMain', height: 600, width: 800
+            }]
+        }];
 
-    data: {
-        name: 'Playground',
+        var me = this;
+        Ext.Array.each(cmpDefinitions, function (o) {
+            me.items.push(o);
+        });
 
-        loremIpsum: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        me.callParent(arguments);
     }
-
-    //TODO - add data, formulas and/or methods to support your widgets
 });
