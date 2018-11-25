@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 
         browserify : {
             dev : {
-                src : ['src/src/**/*.js'],
+                src : ['build/js/winamp.debug.js', 'build/js/weather.debug.js', 'build/js/app.debug.js', 'src/wrapper/wrapper.js'],
                 dest : './public/js/bundle.js',
                 options : {
                     // watch : true, // use watchify for incremental builds!
@@ -62,5 +62,5 @@ module.exports = function (grunt) {
 
 
     grunt.registerTask("dev", ["browserify:dev"]);
-    grunt.registerTask('default', ['concat', 'watch']);
+    grunt.registerTask('default', ['concat', 'dev']);
 };
