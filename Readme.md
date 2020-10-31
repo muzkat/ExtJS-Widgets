@@ -4,6 +4,12 @@
 
 ## Components
 
+### NRG
+
+* simple grid for german energy market
+* backend based on nodeJs and elasticsearch - not included in this repo
+* build scripts not included
+
 ### JSON Viewer
 
 * tree
