@@ -1,0 +1,56 @@
+{
+    "name": "jsonviewer",
+    "sencha": {
+         "namespace": "jsonviewer",
+        "type": "code",
+        "toolkit": "classic",
+        "creator": "anonymous",
+        "summary": "Short summary",
+        "detailedDescription": "Long description of package",
+        "version": "1.0.0",
+        "compatVersion": "1.0.0",
+        "format": "1",
+        "slicer": {
+            "js": [
+                {
+                    "path": "${package.dir}/sass/example/custom.js",
+                    "isWidgetManifest": true
+                }
+            ]
+        },
+
+        "output": "${package.dir}/build",
+        "local": true,
+        "sass" : {
+            "namespace": "jsonviewer",
+            "etc": [
+                "${package.dir}/sass/etc/all.scss"
+             ],
+
+            "var": [
+                "${package.dir}/sass/var"
+            ],
+
+            "src": [
+                "${package.dir}/sass/src"
+            ]
+        },
+
+        "classpath": [
+            "${package.dir}/src"
+        ],
+
+        "overrides": [
+            "${package.dir}/overrides"
+        ],
+
+        "example": {
+            "path": [
+                "${package.dir}/examples"
+            ]
+        },
+
+        "framework": "ext",
+        "requires": []
+    }
+}
