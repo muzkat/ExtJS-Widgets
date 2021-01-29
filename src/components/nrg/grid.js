@@ -125,8 +125,7 @@ Ext.define('Mzk.Nrg.Grid', {
                                                 defaultCenter: record.get('code')
                                             }
                                         }).show();
-                                    }
-                                    catch (e) {
+                                    } catch (e) {
                                         Ext.log('Error.... looks like the class was not found.');
                                     }
                                 }
@@ -154,28 +153,25 @@ Ext.define('Mzk.Nrg.Grid', {
                 }
             }]
         }],
-
-    store: Ext.create('Ext.data.BufferedStore', {
-        proxy: {
-            type: 'ajax',
-            url: Mzk.Nrg.Helper.dataStoreUrl,
-            useDefaultHeader: false,
-            reader: {
-                type: 'json',
-                rootProperty: 'hits.hits',
-                totalProperty: 'hits.total'
-            }
-        },
-        pageSize: 100,
-        autoLoad: true,
-        model: 'Mzk.Nrg.GridLine'
-    }),
     initComponent: function () {
-        this.callParent(arguments);
-        var store = this.getStore();
-        var me = this;
-        store.on('load', function (store) {
-            me.up('#issueWrapper').getViewModel().set('storeRecordCount', store.getTotalCount());
+        this.store = Ext.create('Ext.data.BufferedStore', {
+            proxy: {
+                type: 'ajax',
+                url: Mzk.Nrg.Helper.dataStoreUrl,
+                useDefaultHeader: false,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'hits.hits',
+                    totalProperty: 'hits.total'
+                }
+            },
+            pageSize: 100,
+            autoLoad: true,
+            model: 'Mzk.Nrg.GridLine'
         });
+        this.callParent(arguments);
+        this.store.on('load', function (store) {
+            this.up('#issueWrapper').getViewModel().set('storeRecordCount', store.getTotalCount());
+        }.bind(this));
     }
 });

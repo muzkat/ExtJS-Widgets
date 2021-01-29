@@ -2,7 +2,6 @@ Ext.define('muzkatMap.maps.osm', {
     extend: 'muzkatMap.baseMap',
     alias: 'widget.muzkatOsmMap',
 
-
     viewModel: {
         data: {
             lastLatLng: 'nothing clicked'
