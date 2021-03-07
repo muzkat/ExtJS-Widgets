@@ -2,25 +2,17 @@ Ext.define('jsonviewer.view.JsonTreeView', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.muzkatJsonTreeView',
 
-    viewModel: {
-
-
-
-    },
-
-    title: 'Simple Tree',
+    title: 'Viewer',
 
     rootVisible: false,
-    jsonTreeConfig: undefined, // set by constructor
 
     listeners: {
-
         /*render: function (a) {
             a.getSelectionModel().on("selectionchange", function (a, b) {
                 d.gridbuild(b)
             })
         },*/
-        cellcontextmenu: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts )  {
+        cellcontextmenu: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
             e.preventDefault();
             var b = e;
             (new Ext.menu.Menu({
@@ -39,34 +31,36 @@ Ext.define('jsonviewer.view.JsonTreeView', {
                 },
                     {
                         text: "Collapse all", handler: function () {
-                        a.collapse(!0)
-                    }
+                            a.collapse(!0)
+                        }
                     }]
             })).showAt(b.getXY())
         }
     },
 
+    jsonData: undefined,
+
     initComponent: function () {
 
-        var jsonTree = [
-            {text: 'detention', leaf: true},
-            {
-                text: 'homework', expanded: true, children: [
-                {text: 'book report', leaf: true},
-                {text: 'algebra', leaf: true}
-            ]
-            },
-            {text: 'buy lottery tickets', leaf: true}
-        ];
+        // var jsonTree = [
+        //     {text: 'detention', leaf: true},
+        //     {
+        //         text: 'homework', expanded: true, children: [
+        //             {text: 'book report', leaf: true},
+        //             {text: 'algebra', leaf: true}
+        //         ]
+        //     },
+        //     {text: 'buy lottery tickets', leaf: true}
+        // ];
 
-        if (this.jsonTreeConfig){
-            jsonTree = this.jsonTreeConfig;
-        }
+        // if (this.jsonTreeConfig) {
+        //     jsonTree = this.jsonTreeConfig;
+        // }
 
         this.store = Ext.create('Ext.data.TreeStore', {
             root: {
                 expanded: true,
-                children: jsonTree
+                children: this.jsonData || []
             }
         });
 

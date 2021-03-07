@@ -16,14 +16,8 @@
     "url": "https://github.com/muzkat/ExtJS-Widgets/issues"
   },
   "homepage": "https://github.com/muzkat/ExtJS-Widgets#readme",
-  "dependencies": {
-    "muzkat-ext-app": "^1.0.10"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "browserify": "^15.2.0",
-    "grunt": "^1.3.0",
-    "grunt-browserify": "^5.2.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-watch": "^1.0.0"
+    "@muzkat/nextjs-tools": "^0.0.6"
   }
 }

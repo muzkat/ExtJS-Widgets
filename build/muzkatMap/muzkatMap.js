@@ -1,3 +1,51 @@
+Ext.define('muzkatMap.Module', {
+    singleton: true,
+
+    loadAssets: function () {
+        return this.loadMapScripts();
+    },
+
+    filesLoaded: false,
+
+    scriptPaths: [
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.1.17/leaflet-providers.js'
+    ],
+
+    loadMapScripts: function () {
+        var loadingArray = [], me = this;
+        return new Ext.Promise(function (resolve, reject) {
+            Ext.Array.each(me.scriptPaths, function (url) {
+                loadingArray.push(me.loadMapScript(url));
+            });
+
+            Ext.Promise.all(loadingArray).then(function (success) {
+                    console.log('artefacts were loaded successfully');
+                    resolve('Loading was successful');
+                },
+                function (error) {
+                    reject('Error during artefact loading...');
+                });
+        });
+    },
+
+    loadMapScript: function (url) {
+        return new Ext.Promise(function (resolve, reject) {
+            Ext.Loader.loadScript({
+                url: url,
+                onLoad: function () {
+                    console.log(url + ' was loaded successfully');
+                    resolve();
+                },
+                onError: function (error) {
+                    reject('Loading was not successful for: ' + url);
+                }
+            });
+        });
+    }
+
+});
 Ext.define('muzkatMap.baseMap', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.muzkatBaseMap',
@@ -6,46 +54,6 @@ Ext.define('muzkatMap.baseMap', {
     layout: 'fit',
     title: 'Map'
 });
-
-Ext.define('muzkatMap.contextmenu.MapContextmenu', {
-    extend: 'Ext.menu.Menu',
-    alias: 'widget.muzkatOsmCm',
-
-    parentCmpReference: undefined,
-    mapEventReference: undefined,
-
-    margin: '0 0 10 0',
-    plain: true,
-    items: [{
-        iconCls: 'x-fa fa-map-marker',
-        text: 'Marker platzieren',
-        handler: function (btn) {
-            var muzkatOsmCm = btn.up('muzkatOsmCm');
-            var me = muzkatOsmCm.parentCmpReference,
-                e = muzkatOsmCm.mapEventReference;
-            me.placeMarker({
-                id: new Date().getTime(),
-                lat: e.latlng.lat,
-                lng: e.latlng.lng,
-                desc: 'dummy'
-            })
-        }
-    }, {
-        iconCls: 'x-fa fa-circle-o',
-        text: 'Umkreis setzen',
-        handler: function (btn) {
-            var muzkatOsmCm = btn.up('muzkatOsmCm');
-            var me = muzkatOsmCm.parentCmpReference,
-                e = muzkatOsmCm.mapEventReference;
-            L.circle(e.latlng, 500, {
-                color: 'red',
-                fillColor: '#f03',
-                fillOpacity: 0.5
-            }).addTo(me.map).bindPopup("Umkreis");
-        }
-    }]
-});
-
 
 Ext.define('muzkatMap.mapDetails', {
     extend: 'Ext.container.Container',
@@ -136,6 +144,113 @@ Ext.define('muzkatMap.mapDetails', {
         }
     ]
 });
+Ext.define('muzkatMap.muzkatMap', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.muzkatMap',
+
+    layout: 'fit',
+    title: 'ExtJs Universal Map component by muzkat',
+    header: true,
+    hideDetails: false,
+    defaultCenter: 'berlin',
+    point: undefined,
+
+    initComponent: function () {
+
+        this.items = [
+            {
+                xtype: 'muzkatOsm',
+                defaultCenter: this.defaultCenter,
+                header: this.header,
+                hideDetails: this.hideDetails,
+                point: this.point
+            }
+        ];
+
+        this.callParent(arguments);
+    }
+});
+
+Ext.define('muzkatMap.muzkatMapWidget', {
+    extend: 'muzkatMap.muzkatMap',
+    alias: 'widget.muzkatMapWidget',
+
+    header: true,
+    hideDetails: true
+});
+
+Ext.define('muzkatMap.muzkatosm', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.muzkatOsm',
+
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
+    title: 'Muzkat Open Street Map',
+
+    hideDetails: undefined, // set by constructor - default: false
+    defaultCenter: undefined,
+    point: undefined,
+
+    initComponent: function () {
+        this.items =
+            [
+                {xtype: 'muzkatMapDetails', flex: 1, hidden: this.hideDetails},
+                {xtype: 'muzkatOsmMap', flex: 5, defaultCenter: this.defaultCenter, point: this.point}
+            ];
+        this.callParent(arguments);
+    },
+
+    addMarker: function (markerObj) {
+        this.down('muzkatMapDetails').addMarkerToStore(markerObj);
+    },
+
+    getMapReference: function () {
+        return this.down('muzkatOsmMap').map;
+    }
+});
+
+Ext.define('muzkatMap.contextmenu.MapContextmenu', {
+    extend: 'Ext.menu.Menu',
+    alias: 'widget.muzkatOsmCm',
+
+    parentCmpReference: undefined,
+    mapEventReference: undefined,
+
+    margin: '0 0 10 0',
+    plain: true,
+    items: [{
+        iconCls: 'x-fa fa-map-marker',
+        text: 'Marker platzieren',
+        handler: function (btn) {
+            var muzkatOsmCm = btn.up('muzkatOsmCm');
+            var me = muzkatOsmCm.parentCmpReference,
+                e = muzkatOsmCm.mapEventReference;
+            me.placeMarker({
+                id: new Date().getTime(),
+                lat: e.latlng.lat,
+                lng: e.latlng.lng,
+                desc: 'dummy'
+            })
+        }
+    }, {
+        iconCls: 'x-fa fa-circle-o',
+        text: 'Umkreis setzen',
+        handler: function (btn) {
+            var muzkatOsmCm = btn.up('muzkatOsmCm');
+            var me = muzkatOsmCm.parentCmpReference,
+                e = muzkatOsmCm.mapEventReference;
+            L.circle(e.latlng, 500, {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5
+            }).addTo(me.map).bindPopup("Umkreis");
+        }
+    }]
+});
+
+
 Ext.define('muzkatMap.maps.osm', {
     extend: 'muzkatMap.baseMap',
     alias: 'widget.muzkatOsmMap',
@@ -402,119 +517,4 @@ Ext.define('muzkatMap.maps.osm', {
             }
         }]
     }]
-});
-
-Ext.define('muzkatMap.Module', {
-    singleton: true,
-
-    loadAssets: function () {
-        return this.loadMapScripts();
-    },
-
-    filesLoaded: false,
-
-    scriptPaths: [
-        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.1.17/leaflet-providers.js'
-    ],
-
-    loadMapScripts: function () {
-        var loadingArray = [], me = this;
-        return new Ext.Promise(function (resolve, reject) {
-            Ext.Array.each(me.scriptPaths, function (url) {
-                loadingArray.push(me.loadMapScript(url));
-            });
-
-            Ext.Promise.all(loadingArray).then(function (success) {
-                    console.log('artefacts were loaded successfully');
-                    resolve('Loading was successful');
-                },
-                function (error) {
-                    reject('Error during artefact loading...');
-                });
-        });
-    },
-
-    loadMapScript: function (url) {
-        return new Ext.Promise(function (resolve, reject) {
-            Ext.Loader.loadScript({
-                url: url,
-                onLoad: function () {
-                    console.log(url + ' was loaded successfully');
-                    resolve();
-                },
-                onError: function (error) {
-                    reject('Loading was not successful for: ' + url);
-                }
-            });
-        });
-    }
-
-});
-Ext.define('muzkatMap.muzkatMap', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.muzkatMap',
-
-    layout: 'fit',
-    title: 'ExtJs Universal Map component by muzkat',
-    header: true,
-    hideDetails: false,
-    defaultCenter: 'berlin',
-    point: undefined,
-
-    initComponent: function () {
-
-        this.items = [
-            {
-                xtype: 'muzkatOsm',
-                defaultCenter: this.defaultCenter,
-                header: this.header,
-                hideDetails: this.hideDetails,
-                point: this.point
-            }
-        ];
-
-        this.callParent(arguments);
-    }
-});
-
-Ext.define('muzkatMap.muzkatMapWidget', {
-    extend: 'muzkatMap.muzkatMap',
-    alias: 'widget.muzkatMapWidget',
-
-    header: true,
-    hideDetails: true
-});
-
-Ext.define('muzkatMap.muzkatosm', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.muzkatOsm',
-
-    layout: {
-        type: 'hbox',
-        align: 'stretch'
-    },
-    title: 'Muzkat Open Street Map',
-
-    hideDetails: undefined, // set by constructor - default: false
-    defaultCenter: undefined,
-    point: undefined,
-
-    initComponent: function () {
-        this.items =
-            [
-                {xtype: 'muzkatMapDetails', flex: 1, hidden: this.hideDetails},
-                {xtype: 'muzkatOsmMap', flex: 5, defaultCenter: this.defaultCenter, point: this.point}
-            ];
-        this.callParent(arguments);
-    },
-
-    addMarker: function (markerObj) {
-        this.down('muzkatMapDetails').addMarkerToStore(markerObj);
-    },
-
-    getMapReference: function () {
-        return this.down('muzkatOsmMap').map;
-    }
 });

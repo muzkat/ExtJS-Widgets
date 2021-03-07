@@ -1,5 +1,4 @@
 Ext.define('Playground.view.main.Main', {
-    //extend: 'Ext.tab.Panel',
     extend: 'Ext.container.Container',
     alias: 'widget.app-main',
 
@@ -42,7 +41,7 @@ Ext.define('Playground.view.main.Main', {
             }]
         });
 
-        let components = ['muzkatJsonViewer', 'devbnzJsonMain', 'muzkatMap', 'muzkatNrgMain', 'mzkPiCameraMain', 'bnz-weather', 'bnz-winamp'].map(xtype => {
+        let components = ['mzkJsonViewerMain', 'muzkatMap', 'muzkatNrgMain', 'mzkPiCameraMain', 'bnz-weather', 'bnz-winamp'].map(xtype => {
             var i = {};
             i.title = xtype.toUpperCase();
             i.items = [{xtype: xtype}];
