@@ -1,9 +1,21 @@
 let builder = require('@muzkat/nextjs-tools');
 
-const buildFile = {
-    srcDir: 'src',
-    packagesDir: 'components',
 
-}
-let extjsBuilder = builder(buildFile);
+// todo request targetFolder
+// todo bundle true
+
+let extjsBuilder;
+
+// build app
+extjsBuilder = builder({
+    srcDir: 'src',
+    packagesDir: 'application'
+});
+extjsBuilder.build();
+
+// build modules
+extjsBuilder = builder({
+    srcDir: 'src',
+    packagesDir: 'components'
+});
 extjsBuilder.build();
