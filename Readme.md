@@ -4,13 +4,6 @@
 
 ## Components
 
-### NRG
-
-* simple grid for german energy market
-* backend based on nodeJs and elasticsearch - not included in this repo
-* build scripts not included
-
-
 ### map
 
 * wrapper for open street map and leatlet js
@@ -41,9 +34,5 @@
 
 ### TODOs
 
-* migrate JSON viewer cmd package to new structure
-* add nodeJS based ExtJS build stuff - right now not included due to licencing issues
-
 * include leaflet deps in package.json
 * clean up and fix build files that every component / widgets can be build independent
-* grunt as build tool shoudl be good enough

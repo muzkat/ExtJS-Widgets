@@ -1,0 +1,14 @@
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/classic/theme-neutral/sass/src/tab/Bar.scss:168 */
+
+:root {
+    --grey: #818b94;
+    --grey-light: #cdcdcd
+}
+
+.x-tab-bar-default {
+    background-color: var(--grey);
+}
+
+.x-body {
+    background: var(--grey-light);
+}

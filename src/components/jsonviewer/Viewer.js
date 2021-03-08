@@ -1,4 +1,4 @@
-Ext.define('jsonviewer.view.JsonTreeView', {
+Ext.define('mzk.jsonviewer.Viewer', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.muzkatJsonTreeView',
 
@@ -41,28 +41,31 @@ Ext.define('jsonviewer.view.JsonTreeView', {
     jsonData: undefined,
 
     initComponent: function () {
-
-        // var jsonTree = [
-        //     {text: 'detention', leaf: true},
-        //     {
-        //         text: 'homework', expanded: true, children: [
-        //             {text: 'book report', leaf: true},
-        //             {text: 'algebra', leaf: true}
-        //         ]
-        //     },
-        //     {text: 'buy lottery tickets', leaf: true}
-        // ];
-
-        // if (this.jsonTreeConfig) {
-        //     jsonTree = this.jsonTreeConfig;
-        // }
+        Ext.log({dump: this.jsonData, msg: 'json data'});
 
         this.store = Ext.create('Ext.data.TreeStore', {
             root: {
-                expanded: true,
+                expanded: false,
                 children: this.jsonData || []
             }
         });
+
+        // this.columns = [{
+        //     xtype: 'treecolumn',
+        //     text: 'Flight Endpoints',
+        //     dataIndex: 'text',
+        //     flex: 1,
+        //     renderer: function (val, meta, rec) {
+        //         if (rec.get('isLayover')) {
+        //             meta.tdStyle = 'color: gray; font-style: italic;';
+        //         }
+        //         return val;
+        //     }
+        // }, {
+        //     text: 'Duration',
+        //     dataIndex: 'duration',
+        //     width: 100
+        // }];
 
         this.callParent(arguments);
     }

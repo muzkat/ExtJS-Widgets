@@ -1,4 +1,4 @@
-Ext.define('jsonviewer.view.JsonTextArea', {
+Ext.define('mzk.jsonviewer.Editor', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.muzkatJsonTextArea',
 
@@ -13,7 +13,6 @@ Ext.define('jsonviewer.view.JsonTextArea', {
     },
 
     initComponent: function () {
-
         this.jsonField = Ext.create({
             xtype: 'textareafield',
             grow: true,
@@ -24,44 +23,9 @@ Ext.define('jsonviewer.view.JsonTextArea', {
 
         this.items = [this.jsonField];
 
-
-        // var jsonActions = [{
-        //     iconCls: 'fas fa-paste',
-        //     text: 'Paste',
-        //     handler: 'pasteJson'
-        // }, {
-        //     iconCls: 'fas fa-copy',
-        //     text: 'Copy',
-        //     name: 'copy',
-        // }, {
-        //     xtype: 'tbseparator'
-        // }, {
-        //     name: 'format',
-        //     text: 'Format',
-        //     iconCls: 'fas fa-file-signature',
-        //     handler: 'formatJson'
-        // }, {
-        //     name: 'removeWhiteSpace',
-        //     text: 'Remove white space',
-        //     iconCls: 'fas fa-edit',
-        //     handler: 'removeWhitespace'
-        // }, {
-        //     xtype: 'tbseparator'
-        // }, {
-        //     name: 'clearField',
-        //     text: 'Clear',
-        //     iconCls: 'fas fa-eraser',
-        // }, {
-        //     xtype: 'tbseparator'
-        // }, {
-        //     name: 'loadDataFromFile',
-        //     text: 'Load JSON Data',
-        //     iconCls: 'fas fa-file',
-        // }]
-
         this.tbar = [{
-            iconCls: 'x-fa fa-bug',
-            text: 'edit',
+            iconCls: 'x-fa fa-tree',
+            text: 'Tree',
             handler: function (btn) {
                 var jsonString = this.jsonField.getValue(),
                     jsonObject = Ext.JSON.decode(jsonString, true);
@@ -77,8 +41,10 @@ Ext.define('jsonviewer.view.JsonTextArea', {
 
             }
         }, {
+            iconCls: 'x-fa fa-copy',
             text: 'Copy'
         }, {
+            iconCls: 'x-fa fa-paint-brush',
             text: 'Format',
             handler: function (btn) {
                 for (var b = this.jsonField.getValue().replace(/\n/g, " ").replace(/\r/g, " "), e = [], c = 0, d = !1, f = 0, i = b.length; f < i; f++) {
@@ -95,6 +61,7 @@ Ext.define('jsonviewer.view.JsonTextArea', {
                 this.jsonField.setValue(e.join(""));
             }
         }, {
+            iconCls: 'x-fa fa-compress',
             text: 'Remove white space',
             handler: function (btn) {
                 var a = this.jsonField;
@@ -107,14 +74,15 @@ Ext.define('jsonviewer.view.JsonTextArea', {
                 a.setValue(e.join(""));
             }
         }, {
+            iconCls: 'x-fa fa-times',
             text: 'Clear'
         }, {
-            text: 'Load JSON Data'
+            iconCls: 'x-fa fa-cloud-upload',
+            text: 'Load JSON data'
         }].map(btn => {
             btn.scope = this;
             return btn;
         });
-
 
         this.callParent(arguments);
     },
@@ -136,15 +104,15 @@ Ext.define('jsonviewer.view.JsonTextArea', {
         }) : typeof a[c] === "boolean" ? b.push({
             text: c + " : " + (a[c] ? "true" : "false"),
             leaf: !0,
-            iconCls: "x-fa fa-bug"
+            iconCls: "x-fa fa-file"
         }) : typeof a[c] === "object" ? b.push({
             text: c,
             children: this.json2leaf(a[c]),
-            icon: Ext.isArray(a[c]) ? "x-fa fa-folder" : "x-fa fa-file"
+            iconCls: Ext.isArray(a[c]) ? "x-fa fa-folder" : "x-fa fa-file"
         }) : typeof a[c] === "function" && b.push({
             text: c + " : function",
             leaf: !0,
-            iconCls: "x-fa fa-bug"
+            iconCls: "x-fa fa-superscript"
         }));
         return b
     }

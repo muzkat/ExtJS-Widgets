@@ -1,4 +1,4 @@
-Ext.define('mzk.jsonViewer.main', {
+Ext.define('mzk.jsonviewer.Main', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.mzkJsonViewerMain',
 
