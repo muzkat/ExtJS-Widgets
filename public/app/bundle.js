@@ -1,234 +1,1386 @@
-Ext.define('jsonviewer.view.JsonTextArea', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.muzkatJsonTextArea',
-
-    title: 'Editor',
-
-    layout: 'fit',
-
-    space: function (a) {
-        var b = [], e;
-        for (e = 0; e < a; e++) b.push(" ");
-        return b.join("")
-    },
-
-    initComponent: function () {
-        this.jsonField = Ext.create({
-            xtype: 'textareafield',
-            grow: true,
-            emptyText: 'Paste your JSON here',
-            maxLength: 100000000000000000000,
-            anchor: '100%'
-        });
-
-        this.items = [this.jsonField];
-
-        this.tbar = [{
-            iconCls: 'x-fa fa-tree',
-            text: 'Tree',
-            handler: function (btn) {
-                var jsonString = this.jsonField.getValue(),
-                    jsonObject = Ext.JSON.decode(jsonString, true);
-                if (jsonObject) {
-                    Ext.log({dump: jsonObject, msg: 'valid Json Obj'});
-                    this.mainView.tabPanel.add({
-                        xtype: 'muzkatJsonTreeView',
-                        jsonData: this.json2leaf(jsonObject)
-                    });
-                } else {
-                    Ext.log({msg: 'Json Obj not valid'});
-                }
-
-            }
-        }, {
-            iconCls: 'x-fa fa-copy',
-            text: 'Copy'
-        }, {
-            iconCls: 'x-fa fa-paint-brush',
-            text: 'Format',
-            handler: function (btn) {
-                for (var b = this.jsonField.getValue().replace(/\n/g, " ").replace(/\r/g, " "), e = [], c = 0, d = !1, f = 0, i = b.length; f < i; f++) {
-                    var g = b.charAt(f);
-                    if (d && g === d) b.charAt(f - 1) !== "\\" && (d = !1);
-                    else if (!d && (g === '"' || g === "'")) d = g;
-                    else if (!d && (g === " " || g === "\t")) g = "";
-                    else if (!d && g === ":") g += " ";
-                    else if (!d && g === ",") g += "\n" + this.space(c * 2); else if (!d && (g === "[" || g === "{")) c++, g += "\n" + this.space(c * 2);
-                    else if (!d && (g === "]" || g === "}")) c--, g = "\n" + this.space(c * 2) + g;
-                    e.push(g)
-                }
-
-                this.jsonField.setValue(e.join(""));
-            }
-        }, {
-            iconCls: 'x-fa fa-compress',
-            text: 'Remove white space',
-            handler: function (btn) {
-                var a = this.jsonField;
-                for (var b = a.getValue().replace(/\n/g, " ").replace(/\r/g, " "), e = [], c = !1, d = 0, f = b.length; d < f; d++) {
-                    var i = b.charAt(d);
-                    if (c && i === c) b.charAt(d - 1) !== "\\" && (c = !1);
-                    else if (!c && (i === '"' || i === "'")) c = i; else if (!c && (i === " " || i === "\t")) i = "";
-                    e.push(i)
-                }
-                a.setValue(e.join(""));
-            }
-        }, {
-            iconCls: 'x-fa fa-times',
-            text: 'Clear'
-        }, {
-            iconCls: 'x-fa fa-cloud-upload',
-            text: 'Load JSON data'
-        }].map(btn => {
-            btn.scope = this;
-            return btn;
-        });
-
-        this.callParent(arguments);
-    },
-
-    json2leaf: function (a) {
-        var b = [], c;
-        for (c in a) a.hasOwnProperty(c) && (a[c] === null ? b.push({
-            text: c + " : null",
-            leaf: !0,
-            iconCls: "x-fa fa-bug"
-        }) : typeof a[c] === "string" ? b.push({
-            text: c + ' : "' + a[c] + '"',
-            leaf: !0,
-            iconCls: "x-fa fa-bug"
-        }) : typeof a[c] === "number" ? b.push({
-            text: c + " : " + a[c],
-            leaf: !0,
-            iconCls: "x-fa fa-bug"
-        }) : typeof a[c] === "boolean" ? b.push({
-            text: c + " : " + (a[c] ? "true" : "false"),
-            leaf: !0,
-            iconCls: "x-fa fa-file"
-        }) : typeof a[c] === "object" ? b.push({
-            text: c,
-            children: this.json2leaf(a[c]),
-            iconCls: Ext.isArray(a[c]) ? "x-fa fa-folder" : "x-fa fa-file"
-        }) : typeof a[c] === "function" && b.push({
-            text: c + " : function",
-            leaf: !0,
-            iconCls: "x-fa fa-superscript"
-        }));
-        return b
-    }
-});
-Ext.define('mzk.jsonViewer.main', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.mzkJsonViewerMain',
-
-    layout: 'fit',
-    header: false,
-
-    initComponent: function () {
-        var defaults = {
-            mainView: this
-        };
-
-        this.treePanel = Ext.create(Ext.apply({}, {xtype: 'muzkatJsonTreeView'}, defaults));
-        this.editorPanel = Ext.create(Ext.apply({}, {xtype: 'muzkatJsonTextArea'}, defaults));
-        this.tabPanel = Ext.create({xtype: 'tabpanel', items: [this.treePanel, this.editorPanel]});
-        this.tabPanel.setActiveTab(this.editorPanel);
-
-        this.items = [
-            this.tabPanel
-        ];
-
-        this.callParent(arguments);
-    }
-});
-Ext.define('jsonviewer.view.JsonTreeView', {
-    extend: 'Ext.tree.Panel',
-    alias: 'widget.muzkatJsonTreeView',
-
-    title: 'Viewer',
-
-    rootVisible: false,
-
+Ext.define('Mzk.Nrg.NewsGrid', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.newsGrid',
+    iconCls: 'fas fa-fire',
+    //controller: 'accountGridController',
     listeners: {
-        /*render: function (a) {
-            a.getSelectionModel().on("selectionchange", function (a, b) {
-                d.gridbuild(b)
-            })
-        },*/
-        cellcontextmenu: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-            e.preventDefault();
-            var b = e;
-            (new Ext.menu.Menu({
-                items: [{
-                    text: "Expand", handler: function () {
-                        a.expand()
-                    }
-                }, {
-                    text: "Expand all", handler: function () {
-                        a.expand(!0)
-                    }
-                }, "-", {
-                    text: "Collapse", handler: function () {
-                        a.collapse()
-                    }
-                },
-                    {
-                        text: "Collapse all", handler: function () {
-                            a.collapse(!0)
-                        }
-                    }]
-            })).showAt(b.getXY())
+        select: function (rowModel, record, index, eOpts) {
+            if (rowModel.view) {
+                // var view = rowModel.view;
+                // view.up('#issueWrapper').updateIssue(record);
+            }
+        }
+    },
+    viewModel: {
+        data: {
+            resultCount: 0
         }
     },
 
-    jsonData: undefined,
+    header: {
+        xtype: 'header',
+        title: 'Facts & News',
+        titlePosition: 0
+    },
+
+    mBasetitle: 'Energy Marktpartner',
+
+    hideHeaders: true,
+    columns: [
+        // {
+        //     xtype: 'datecolumn',
+        //     dataIndex: 'published',
+        //     format: 'd.m.Y H:i:s',flex:1
+        // },
+        {
+            flex: 8,
+            dataIndex: 'title',
+            renderer: function (value, meta, record, rIndex, cIndex, store, view) {
+                var p = record.get('published');
+                var dt = Ext.Date.parse(p, 'c');
+                value = '<h3>' + Ext.Date.format(dt, 'd.m.Y H:i:s') + '&nbsp;&nbsp; - &nbsp;&nbsp;' +value + '</h3>';
+                var c = record.get('company');
+                var r = record.get('ressort');
+                if (c) {
+                    value += '<i>' + r + '&nbsp;&nbsp; - &nbsp;&nbsp;' + c.name + '</i>';
+                }
+
+
+                var keywords = record.get('keywords');
+                if (keywords && 'keyword' in keywords) {
+                    value += '&nbsp;&nbsp; - &nbsp;&nbsp;' + keywords.keyword.join(', ');
+                }
+                return value;
+            }
+        }
+    ],
+
+    plugins: [{
+        ptype: 'rowwidget',
+        widget: {
+            xtype: 'container', layout: 'center', items: [], padding: '20 20 20 20'
+        },
+        onWidgetAttach: function (plugin, widget, record) {
+            var storeData = record.get('body');
+            storeData = storeData.replace(/\n+/g, '<br>');
+            widget.removeAll();
+            widget.add({
+                xtype: 'container',
+                html: storeData + '<br>News Service & Aggregation: Nepoli News, Berlin, Germany'
+            });
+        }
+    }],
 
     initComponent: function () {
 
-        // var jsonTree = [
-        //     {text: 'detention', leaf: true},
-        //     {
-        //         text: 'homework', expanded: true, children: [
-        //             {text: 'book report', leaf: true},
-        //             {text: 'algebra', leaf: true}
-        //         ]
-        //     },
-        //     {text: 'buy lottery tickets', leaf: true}
-        // ];
-
-        // if (this.jsonTreeConfig) {
-        //     jsonTree = this.jsonTreeConfig;
-        // }
-
-        Ext.log({dump: this.jsonData, msg: 'json data'});
-
-        this.store = Ext.create('Ext.data.TreeStore', {
-            root: {
-                expanded: false,
-                children: this.jsonData || []
-            }
-        });
-
-        this.columns = [{
-            xtype: 'treecolumn',
-            text: 'Flight Endpoints',
-            dataIndex: 'text',
-            flex: 1,
-            renderer: function (val, meta, rec) {
-                if (rec.get('isLayover')) {
-                    meta.tdStyle = 'color: gray; font-style: italic;';
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                url: Mzk.Nrg.Api.buildUrl('news/dpa'),
+                reader: {
+                    type: 'json',
+                    rootProperty: 'content.story',
+                },
+                useDefaultXhrHeader: false,
+                // username: 'bnz',
+                // password: 'Fumakilla2020-',
+                // withCredentials: true,
+                extraParams: {
+                    codesFrom: 'dvgw'
                 }
-                return val;
-            }
-        }, {
-            text: 'Duration',
-            dataIndex: 'duration',
-            width: 100
-        }];
+            },
+            autoLoad: true
+        });
 
         this.callParent(arguments);
     }
 });
+Ext.define('mzk.harvest.grid.dayContainer', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.mzkHarvestDay',
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
+    dayBtnConfig: undefined,
+
+    initComponent: function () {
+
+        var btn = {
+            xtype: 'button',
+            flex: 1,
+            handler: function (btn) {
+                var main = btn.up('#editorMain');
+                var grid = main.down('mzkHarvestTimeEntriesGrid');
+                var s = grid.getStore(),
+                    p = s.getProxy(),
+                    extraParams = p.getExtraParams();
+
+                var params = {
+                    from: Ext.Date.format(btn.date, 'Y-m-d'),
+                    to: Ext.Date.format(btn.date, 'Y-m-d')
+                };
+
+                if (extraParams) {
+                    extraParams = Ext.apply(extraParams, params);
+                } else {
+                    extraParams = params;
+                }
+                p.setExtraParams(extraParams);
+                s.load();
+            }
+        };
+
+
+        var btnCfg = Ext.apply(btn, this.dayBtnConfig);
+        var weekday = false;
+        if (btnCfg.weekend !== true) {
+            btnCfg.cls = 'weekday';
+            weekday = true;
+        }
+        this.weekday = weekday;
+        this.items = [
+            btnCfg,
+            {
+                xtype: 'container',
+                hidden: true,
+                minHeight: 17,
+                html: ''
+            }];
+
+
+        this.callParent(arguments);
+    },
+
+    analyseEntries: function () {
+        var b = this.down('button');
+        var total = 0;
+        var dayResult = [];
+        Ext.Array.each(b.entries, function (recordEntry) {
+            var h = recordEntry.get('hours');
+            total += h;
+            var p = recordEntry.get('project');
+            p.task = recordEntry.get('task');
+            p.hours = h;
+            p.client = recordEntry.get('client');
+            dayResult.push(p);
+        });
+        var c = this.down('container');
+        var bookings = '-';
+        if(dayResult.length > 0){
+            bookings = dayResult.length;
+        }
+        c.setHtml(total + '<br>' + bookings);
+        c.show();
+        return {
+            total: total,
+            weekday: this.weekday,
+            dayResult: dayResult
+        };
+    }
+});
+Ext.define('Mzk.Harvest.Main', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.mzkHarvestMain',
+    layout: 'fit',
+    title: 'Harvest',
+    items: [{
+        xtype: 'tabpanel',
+        tabPosition: 'left',
+        tabRotation: 0,
+        items: [
+            /*{
+            xtype: 'mzkHarvestTimeEntriesGrid',
+            title: 'Overview',
+            iconCls: 'fas fa-clock'
+        }, */{
+                xtype: 'panel',
+                title: 'Editor',
+                iconCls: 'fas fa-edit',
+                layout: {
+                    type: 'vbox', align: 'stretch'
+                },
+                itemId: 'editorMain',
+                items: [{
+                    xtype: 'container',
+                    layout: 'center',
+                    padding: '5 5 5 5',
+                    items: [{
+                        xtype: 'container',
+                        layout: {
+                            type: 'vbox', align: 'stretch'
+                        },
+                        defaults: {
+                            padding: '5 5 5 5'
+                        },
+                        items: [{
+                            xtype: 'container',
+                            layout: 'center',
+                            items: [{
+                                xtype: 'container',
+                                layout: {
+                                    type: 'hbox', align: 'stretch'
+                                },
+                                items: [{
+                                    xtype: 'datefield',
+                                    fieldLabel: 'From',
+                                    format: 'Y-m-d',
+                                    value: new Date()
+                                }, {
+                                    xtype: 'datefield',
+                                    fieldLabel: 'To',
+                                    format: 'Y-m-d',
+                                    value: new Date()  // defaults to today
+                                }, {
+                                    xtype: 'button',
+                                    iconCls: 'fas fa-check', handler: function (btn) {
+                                        var main = btn.up('#editorMain');
+                                        var grid = main.down('mzkHarvestTimeEntriesGrid');
+                                        var dfs = main.query('datefield');
+                                        var params = {};
+                                        var dateRange = {};
+                                        Ext.Array.each(dfs, function (df) {
+                                            var l = df.getFieldLabel();
+                                            params[l.toLowerCase()] = Ext.Date.format(df.getValue(), df.format);
+                                            dateRange[l.toLowerCase()] = df.getValue();
+                                        });
+                                        var s = grid.getStore(),
+                                            p = s.getProxy(),
+                                            extraParams = p.getExtraParams();
+
+                                        if (extraParams) {
+                                            extraParams = Ext.apply(extraParams, params);
+                                        } else {
+                                            extraParams = params;
+                                        }
+
+                                        var firstDate = dateRange.from;
+                                        var secondDate = dateRange.to;
+
+                                        var diffDays = Ext.Date.diff(firstDate, secondDate, Ext.Date.DAY);
+
+                                        var visu = main.down('#daysCon');
+                                        visu.removeAll();
+                                        for (i = 0; i <= diffDays; i++) {
+                                            visu.add({
+                                                dayBtnConfig: {
+                                                    text: Ext.Date.format(firstDate, 'd.'),
+                                                    tooltip: Ext.Date.format(firstDate, 'd.m.Y'),
+                                                    itemId: 'd' + Ext.Date.format(firstDate, 'Ymd'),
+                                                    date: firstDate,
+                                                    weekend: Ext.Date.isWeekend(firstDate),
+                                                    entries: []
+                                                }
+                                            });
+                                            firstDate = Ext.Date.add(firstDate, Ext.Date.DAY, 1);
+                                        }
+
+                                        p.setExtraParams(extraParams);
+                                        s.load();
+                                    }
+                                }]
+                            }]
+                        },
+                            {
+                                xtype: 'container',
+                                itemId: 'daysCon',
+                                defaultType: 'mzkHarvestDay',
+                                layout: {
+                                    type: 'hbox', align: 'stretch'
+                                }
+                            }, {
+                                xtype: 'container',
+                                layout: {
+                                    type: 'hbox', align: 'stretch'
+                                },
+                                defaultType: 'container',
+                                items: [{
+
+                                        minHeight: 100,
+                                        width: '80%',
+                                        html: '',
+                                        itemId: 'results', flex: 1
+                                },{
+                                    layout: 'center',
+                                    items: [{
+                                        xtype: 'container',
+                                        minHeight: 100,
+                                        width: '80%',
+                                        flex: 1,
+                                        itemId: 'projects', hidden:true,layout: {
+                                            type: 'hbox', align: 'stretch'
+                                        }
+                                    }]
+                                },]
+                            }]
+                    }]
+
+                }, {
+                    xtype: 'mzkHarvestTimeEntriesGrid',
+                    header: false,
+                    flex: 4,
+                    onStoreLoad: function (store, records, success) {
+                        if (success) {
+                            var main = this.up('#editorMain');
+                            if (main) {
+                                if (records) {
+                                    //main.query('mzkHarvestDay')
+                                    var array = main.query('mzkHarvestDay');
+                                    array.map(function (item) {
+                                        var b = item.down('button');
+                                        b.entries = [];
+                                    });
+                                    Ext.Array.each(records, function (record, index, array) {
+                                        var d = record.get('spent_date');
+                                        if (d) {
+                                            var a = d.split('-');
+                                            var b = main.down('#d' + a.join(''));
+                                            if (b) {
+                                                b.entries.push(record);
+                                            }
+                                        }
+                                    });
+
+                                    var analysis = [];
+                                    array.map(function (item) {
+                                        analysis.push(item.analyseEntries());
+                                    });
+
+                                    var hoursDone = 0;
+                                    var hoursToDo = 0;
+                                    var projects = {};
+                                    Ext.Array.each(analysis, function (o) {
+
+                                        if (o.weekday === true) {
+                                            hoursToDo += 8;
+                                        }
+
+                                        hoursDone += o.total;
+                                        Ext.Array.each(o.dayResult, function (day, index) {
+                                            var o;
+                                            if (day.id in projects) {
+                                                projects[day.id]['hours'] = projects[day.id]['hours'] + day.hours;
+                                            } else {
+                                                projects[day.id] = {
+                                                    hours: day.hours, name: day.name
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    var p = main.down('#projects');
+
+                                    var cmp = [];
+                                    Ext.iterate(projects, function (projectId, obj) {
+                                        cmp.push({
+                                            xtype: 'container',
+                                            html: obj.name,
+                                            minHeight: 120,
+                                            flex: parseInt(obj.hours)
+                                        });
+                                    });
+                                    p.add(cmp);
+
+                                    var res = main.down('#results');
+
+                                    var daysSick = 4;
+                                    var offsetDone = 0;
+                                    var offsetToAdd = 0;
+                                    var bruttoDays = hoursToDo / 8;
+                                    hoursToDo = hoursToDo - daysSick * 8;
+                                    var nettoDays = hoursToDo / 8;
+                                    hoursDone = hoursDone - offsetDone + offsetToAdd;
+                                    var saldo = hoursToDo - hoursDone;
+
+                                    var html = '<table>';
+                                    html += '<tr><td>STUNDEN (SOLL)</td><td>' + hoursToDo + '</td>';
+                                    html += '<tr><td>STUNDEN (IST)</td><td>' + hoursDone + '</td>';
+                                    html += '<tr><td>SALDO</td><td>' + saldo + '</td>';
+                                    html += '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+                                    html += '<tr><td>ARBEITSTAGE (BRUTTO)</td><td>' + bruttoDays + '</td>';
+                                    html += '<tr><td>ARBEITSTAGE (NETTO)</td><td>' + nettoDays + '</td>';
+                                    html += '<tr><td>ARBEITSTAGE (SICK)</td><td>' + daysSick + '</td>';
+                                    html += '<tr><td>&nbsp;</td><td>&nbsp;</td>';
+                                    html += '<tr><td>OFFSET STUNDEN (DONE-)</td><td>' + offsetDone + '</td>';
+                                    html += '<tr><td>OFFSET STUNDEN (ADD+)</td><td>' + offsetToAdd + '</td>';
+                                    html += '</table>';
+
+                                    res.setHtml(html);
+                                }
+                            }
+                        } else {
+                            // handle error
+                        }
+                    }
+                }]
+            }]
+    }]
+});
+
+
+Ext.define('mzk.harvest.grid.main', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.mzkHarvestTimeEntriesGrid',
+    tbar: [],
+    hideHeaders: true,
+    columns: [
+        {
+            text: 'KEY',
+            dataIndex: 'id',
+            flex: 1
+        }, {
+            dataIndex: 'spent_date',
+            flex: 1
+        }, {
+            dataIndex: 'hours',
+            flex: 1
+        }, {
+            dataIndex: 'notes',
+            flex: 1
+        }, {
+            dataIndex: 'project',
+            flex: 1,
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                //var recordData = record.getData();
+                return value.name;
+            }
+        }, {
+            dataIndex: 'external_reference',
+            flex: 1,
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                if (value && 'permalink' in value) {
+                    return value.permalink;
+                }
+                return ' - ';
+            }
+        }, {
+            dataIndex: 'spent_date',
+            flex: 1
+        },
+        {
+            text: 'SUMMARY', dataIndex: 'title', flex: 4, cellWrap: true,
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                var recordData = record.getData();
+                return JSON.stringify(recordData);
+            }
+        }
+    ],
+    bbar: {
+        xtype: 'pagingtoolbar',
+        displayInfo: true
+    },
+    onStoreLoad: function (store, records, success) {
+        return null;
+    },
+    initComponent: function () {
+        var me = this;
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                url: '/time/users/me/bookings',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'time_entries',
+                    totalProperty: 'total_entries'
+                },
+                noCache: false,
+                pageSize: 100
+            },
+            pageSize: 100,
+            autoLoad: false,
+            listeners: {
+                load: function (s, records, successful, operation, eOpts) {
+                    me.onStoreLoad(s, records, successful);
+                }
+            }
+        });
+        this.callParent(arguments);
+    }
+
+});
+
+
+/**
+ * Created by bnz on 27.08.17
+ */
+
+Ext.define('MuzkatFinance.SprintView.GridController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.sprintGridViewController',
+
+    onSelect: function (rowModel, record, index, eOpts) {
+        var key = record.get('id');
+        if (rowModel.view) {
+            // var view = rowModel.view;
+            // view.up('#issueWrapper').updateIssue(key);
+            Ext.log({dump: key});
+            Ext.Ajax.request({
+                method: 'GET',
+                url: '/agile/boards/15/issues/' + key,
+                disableCaching: false,
+            }).then(function (response, opts) {
+                    var obj = Ext.decode(response.responseText, true);
+                    if (obj) {
+                        var transformed = {};
+                        transformed.total = obj.total ? obj.total : null;
+                        if (transformed.total !== null && transformed.total > 0) {
+                            transformed.items = [];
+                            Ext.Array.each(obj.issues, function (jissue) {
+                                var issue = {};
+                                issue.key = jissue.key;
+                                jissue = jissue.fields;
+                                issue.status = jissue.status.name;
+                                if (jissue.assignee && jissue.assignee.name) {
+                                    issue.assignee = jissue.assignee.name;
+                                    issue.assigneeKey = jissue.assignee.key;
+                                }
+                                transformed.items.push(issue);
+                            });
+                        }
+                        Ext.log({dump: transformed});
+                    }
+                },
+                function (response, opts) {
+                    // me.getViewModel().set('profile.createAble', true);
+                });
+        }
+    }
+});
+
+
+Ext.define('MuzkatFinance.SprintView.Grid', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.sprintGridView',
+
+    viewModel: {
+        data: {
+            title: 'Closed'
+        }
+    },
+
+    controller: 'sprintGridViewController',
+    listeners: {
+        select: 'onSelect'
+    },
+
+    hideHeaders: true,
+    columns: [
+        {text: 'Status', dataIndex: 'state', flex: 1},
+        {
+            text: 'ID',
+            dataIndex: 'id',
+            flex: 2
+        },
+        {text: 'Name', dataIndex: 'name', flex: 4, cellWrap: true},
+        {text: 'ASSIGNEE', dataIndex: 'startDate', flex: 1},
+        {text: 'CREATOR', dataIndex: 'endDate', flex: 1},
+        {text: 'CREATOR', dataIndex: 'completeDate', flex: 1}
+    ],
+
+    bind: {
+        title: '{title}'
+    },
+
+    jViewType: undefined,
+    initComponent: function () {
+        var url = '/agile/boards/15',
+            title = 'Closed';
+
+        if (Ext.isDefined(this.jViewType)) {
+            if (this.jViewType === 'upcoming') {
+                url += '/' + this.jViewType;
+                title = 'Latest & upcoming';
+                this.enableToolbarBottom();
+            }
+        } else {
+            url += '/closed';
+        }
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                url: url,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'values'
+                },
+                noCache: false
+            },
+            autoLoad: true
+        });
+
+        this.callParent(arguments);
+        this.getViewModel().set('title', title)
+    },
+
+    enableToolbarBottom: function () {
+        this.bbar = [{
+            xtype: 'container',
+            flex: 1,
+            height: 150,
+            layout: 'fit',
+            items: [{
+                xtype: 'box',
+                html: 'Kein Sprint gewählt'
+            }]
+        }]
+    }
+
+});
+
+
+Ext.define('MuzkatFinance.SprintView.Overview', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.sprintOverview',
+    title: 'BPC Sprints',
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
+    items: [{
+        xtype: 'sprintGridView',
+        jViewType: 'upcoming',
+        flex: 1
+    }, {
+        xtype: 'sprintGridView',
+        flex: 1
+    }],
+
+    initComponent: function () {
+        // this.MuzkatFinance.Service.getIssueTypes();
+        this.callParent(arguments);
+    }
+});
+Ext.define('Mzk.Jira.GridLine', {
+    extend: 'Ext.data.Model',
+    fields: [
+        'key',
+        'fields',
+        {
+            name: 'title',
+            calculate: function (data) {
+                var value = null;
+                if (data.fields.summary) {
+                    value = data.fields.summary;
+                }
+                return value;
+            }
+        },
+        {
+            name: 'description',
+            calculate: function (data) {
+                var value = null;
+                if (data.fields.description) {
+                    value = data.fields.description;
+                }
+                return value;
+            }
+        },
+        {
+            name: 'created',
+            calculate: function (data) {
+                var value = null;
+                if (data.fields.created) {
+                    value = new Date(data.fields.created);
+                }
+                return value;
+            }
+        },
+        {
+            name: 'creator',
+            calculate: function (data) {
+                var value = null;
+                if (data.fields.creator) {
+                    value = data.fields.creator.displayName;
+                }
+                return value;
+            }
+        },
+        {
+            name: 'assignee',
+            calculate: function (data) {
+                var value = null;
+                if (data.fields.assignee) {
+                    value = data.fields.assignee.displayName;
+                }
+                return value;
+            }
+        }]
+});
+
+Ext.define('Mzk.Jira.GridController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.issuesGridController',
+
+    control: {
+        '*': {
+            collapsebody: 'collapsebody',
+            expandbody: 'expandbody'
+        }
+    },
+
+    collapsebody: function (rowNode, record, expandRow, eOpts) {
+        Ext.Msg.alert('Collapse', 'The Add button was clicked');
+    },
+
+    expandbody: function (rowNode, record, expandRow, eOpts) {
+        Ext.Msg.alert('Expand', 'The Add button was clicked');
+    },
+
+    onSelect: function (rowModel, record, index, eOpts) {
+        var key = record.get('key');
+        if (rowModel.view) {
+            var view = rowModel.view;
+            view.up('#issueWrapper').updateIssue(key);
+            view.up('#issueWrapper').down('muzkatJsonTextArea').down('textareafield').setValue(JSON.stringify(record.getData()));
+        }
+    }
+});
+
+Ext.define('Mzk.Jira.Grid', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.issuesGrid',
+    title: 'ISSUES',
+    iconCls: 'x-fa fa-fire',
+    controller: 'issuesGridController',
+    listeners: {
+        select: 'onSelect'
+    },
+    hideHeaders: true,
+    columns: [
+        {
+            text: 'KEY',
+            dataIndex: 'key',
+            flex: 2,
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                var record = record.getData();
+                var closed = false;
+                if (record && record.fields && record.fields.status.name === 'Closed') {
+                    closed = true;
+                    metadata.tdStyle = 'color:black;text-decoration: line-through;';
+                }
+                if (record && record.fields && record.fields.issuetype) {
+                    var issueObj = Mzk.Jira.Service.issueTypeMap.get(record.fields.issuetype.id);
+                    if (Ext.isObject(issueObj) && issueObj.iconCls) {
+                        var color = issueObj.color;
+                        if (closed === true) {
+                            // color = '#000';
+                        }
+                        value = "<span class='" + issueObj.iconCls + "' style='color:" + color + ";margin-left:5px;'></span>&nbsp;&nbsp;" + value;
+                    }
+                    metadata.tdAttr = 'data-qtip=' + record.fields.issuetype.name;
+                }
+                return value;
+            }
+        },
+        {text: 'SUMMARY', dataIndex: 'title', flex: 4, cellWrap: true},
+        {
+            text: 'CREATED',
+            flex: 1,
+            dataIndex: 'created',
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                metadata.tdAttr = 'data-qtip=' + Ext.Date.format(value, 'd.m.Y H:i:s');
+                var created = value,
+                    now = new Date(),
+                    fromDate = parseInt(created.getTime() / 1000),
+                    toDate = parseInt(now.getTime() / 1000),
+                    timeDiff = (toDate - fromDate) / 3600,
+                    timeDiff = Math.round(timeDiff),
+                    dateString = timeDiff + ' h ago';
+                if (timeDiff === 0) {
+                    dateString = 'now';
+                }
+
+                if (timeDiff === 1) {
+                    dateString = timeDiff + ' h ago';
+                }
+
+                if (timeDiff > 24) {
+                    timeDiff = timeDiff / 24;
+                    timeDiff = Math.round(timeDiff);
+                    dateString = timeDiff + ' d ago';
+                }
+
+                dateString = '<i>' + dateString + '</i>';
+                dateString = '<span class="x-fa fa-clock-o" style="color:#4CAF50"></span>&nbsp;&nbsp;' + dateString;
+                return dateString;
+            }
+        },
+        {text: 'ASSIGNEE', dataIndex: 'assignee', flex: 1},
+        {text: 'CREATOR', dataIndex: 'creator', flex: 1}
+    ],
+
+    isWidget: false,
+
+    initComponent: function () {
+        var url = null;
+        if (Ext.isDefined(Mzk.Jira.Service.baseUrl)) {
+            url = Mzk.Jira.Service.baseUrl;
+        } else {
+            Mzk.Jira.Service.baseUrl = this.backendUrl;
+            Mzk.Jira.Service.getIssueTypes();
+            url = this.backendUrl;
+        }
+
+        url += '/issues';
+
+        if (this.isWidget === true) {
+            Ext.Array.each(this.columns, function (col, index, array) {
+                if (index > 2) {
+                    col.hidden = true;
+                }
+            });
+        }
+
+        this.store = Ext.create('Ext.data.BufferedStore', {
+            proxy: {
+                type: 'ajax',
+                url: url,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'issues',
+                    totalProperty: 'total'
+                },
+                noCache: false,
+                pageParam: ''
+            },
+            pageSize: 100,
+            autoLoad: true,
+            model: 'Mzk.Jira.GridLine'
+        });
+
+        this.callParent(arguments);
+    }
+});
+
+Ext.define('Mzk.Jira.Grid.Reporter', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.mzkJiraReporterGrid',
+    title: 'REPORTER',
+    iconCls: 'x-fa fa-user',
+    hideHeaders: true,
+    columns: [
+        {text: 'NAME', dataIndex: 'name', flex: 1},
+        {
+            text: 'REPORTED', dataIndex: 'reported', flex: 1,
+            summaryType: 'count'
+        }
+    ], features: [{
+        ftype: 'summary'
+    }],
+
+    isWidget: false,
+
+    initComponent: function () {
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                timeout: 90000,
+                noCache: false,
+                pageParam: '',
+                limitParam: '',
+                startParam: '',
+                url: 'http://build.virtimo.net/node/jira/reporter/list',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'items',
+                    totalProperty: 'total'
+                }
+            },
+            autoLoad: true,
+            fields: ['name', 'reported'],
+            sorters: [{
+                property: 'reported', direction: 'DESC'
+            }]
+        });
+
+        this.callParent(arguments);
+    }
+});
+
+Ext.define('Mzk.Jira.Grid.Tickets', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.mzkJiraTicketsGrid',
+    title: 'TICKETS',
+    iconCls: 'x-fa fa-ticket',
+    hideHeaders: true,
+    columns: [
+        {text: 'TYPE', dataIndex: 'name', flex: 1},
+        {
+            text: 'REPORTED', dataIndex: 'reported', flex: 1,
+            summaryType: 'count'
+        }
+    ], features: [{
+        ftype: 'summary'
+    }],
+
+    isWidget: false,
+
+    initComponent: function () {
+        this.store = Ext.create('Ext.data.Store', {
+            fields: ['name', 'reported'],
+            proxy: {
+                type: 'ajax',
+                timeout: 90000,
+                noCache: false,
+                pageParam: '',
+                limitParam: '',
+                startParam: '',
+                url: 'http://build.virtimo.net/node/jira/tickets/list',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'items',
+                    totalProperty: 'total'
+                }
+            },
+            autoLoad: true,
+            sorters: [{
+                property: 'reported', direction: 'DESC'
+            }]
+        });
+
+        this.callParent(arguments);
+    }
+});
+
+
+Ext.define('Mzk.Jira.Service', {
+    singleton: true,
+    issuetypes: [],
+    issuesLoaded: false,
+    baseUrl: undefined,
+    getBase: function () {
+        var base = null;
+        if (Ext.isDefined(this.baseUrl)) {
+            base = this.baseUrl.replace('jira', '');
+        }
+        return base;
+    },
+    getIssueTypes: function () {
+        if (this.issuetypes.length > 0) {
+            return this.issuetypes;
+        } else {
+            if (this.issuesLoaded === false) {
+                this.issuesLoaded = true;
+                var me = this;
+                Ext.Ajax.request({
+                    method: 'GET',
+                    url: this.baseUrl + '/issuetypes',
+                    disableCaching: false,
+                }).then(function (response, opts) {
+                        var array = Ext.decode(response.responseText, true);
+                        if (array !== null) {
+                            me.issuetypes = array;
+                            Ext.Array.each(array, function (issue) {
+                                var iconCls = 'x-fa fa-bug';
+                                var color = '#607D8B';
+                                if (issue.id === "1") {
+                                    iconCls = 'x-fa fa-bug'
+                                    color = '#ff1744'
+                                }
+
+                                if (issue.id === "2") {
+                                    iconCls = 'x-fa fa-cogs'
+                                    color = '#00BCD4'
+                                }
+
+                                if (issue.id === "3") {
+                                    iconCls = 'x-fa fa-check-square'
+                                    color = '#FFEB3B'
+                                }
+
+                                me.issueTypeMap.add(issue.id, {
+                                    name: issue.name,
+                                    desc: issue.description,
+                                    iconCls: iconCls,
+                                    color: color
+                                });
+                            });
+                        }
+                    },
+                    function (response, opts) {
+                        // me.getViewModel().set('profile.createAble', true);
+                    });
+            }
+        }
+    },
+    issueTypeMap: new Ext.util.HashMap()
+});
+
+Ext.define('Mzk.Jira.Main', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.mzkJiraMain',
+    layout: 'fit',
+    config: {
+        backendUrl: null
+    },
+    padding: '15 15 15 15',
+    items: [{
+        xtype: 'panel',
+        layout: 'card',
+        dockedItems: [{
+            xtype: 'toolbar',
+            dock: 'top',
+            padding: '5 5 5 5',
+            items: [{
+                iconCls: 'x-fa fa-bullseye',
+                scale: 'large',
+                tooltip: 'BPC Issues',
+                margin: '2 2 2 2',
+                style: 'border-style: none; border-width: 0px;',
+                handler: function (btn) {
+                    btn.up('panel').setActiveItem('issueWrapper');
+                }
+            }, {
+                iconCls: 'x-fa fa-plug',
+                scale: 'large',
+                tooltip: 'BPC Sprints',
+                margin: '2 2 2 2',
+                style: 'border-style: none; border-width: 0px;',
+                handler: function (btn) {
+                    btn.up('panel').setActiveItem('sprintOverview');
+                }
+            }, {
+                iconCls: 'x-fa fa-user',
+                scale: 'large',
+                tooltip: 'USER / REPORTER',
+                margin: '2 2 2 2',
+                style: 'border-style: none; border-width: 0px;',
+                handler: function (btn) {
+                    btn.up('panel').setActiveItem('reporter');
+                }
+            }, {
+                iconCls: 'x-fa fa-ticket',
+                scale: 'large',
+                tooltip: 'TICKETS',
+                margin: '2 2 2 2',
+                style: 'border-style: none; border-width: 0px;',
+                handler: function (btn) {
+                    btn.up('panel').setActiveItem('tickets');
+                }
+            }]
+        }],
+        items: [{
+            xtype: 'container',
+            title: 'ISSUES',
+            padding: '5 5 5 5',
+            iconCls: 'x-fa fa-fire',
+            itemId: 'issueWrapper',
+            viewModel: {
+                data: {
+                    activeItem: null
+                }
+            },
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
+            items: [
+                {
+                    xtype: 'issuesGrid',
+                    header: false,
+                    flex: 4
+                },
+                {
+                    xtype: 'muzkatJsonViewer',
+                    flex: 3
+                }],
+            updateIssue: function (key) {
+                this.getViewModel().set('activeItem', key);
+            }
+        }, {
+            xtype: 'sprintOverview'
+        }, {
+            xtype: 'mzkJiraReporterGrid', itemId: 'reporter'
+        }, {
+            xtype: 'mzkJiraTicketsGrid', itemId: 'tickets'
+        }]
+    }],
+
+    initComponent: function () {
+        Mzk.Jira.Service.baseUrl = this.config.backendUrl;
+        Mzk.Jira.Service.getIssueTypes();
+        this.callParent(arguments);
+    }
+});
+
+
+
+
+/**
+ * Created by bnz on 27.08.17
+ */
+
+Ext.define('MuzkatFinance.SprintView.GridController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.sprintGridViewController',
+
+    onSelect: function (rowModel, record, index, eOpts) {
+        var key = record.get('id');
+        if (rowModel.view) {
+            // var view = rowModel.view;
+            // view.up('#issueWrapper').updateIssue(key);
+            Ext.log({dump: key});
+            Ext.Ajax.request({
+                method: 'GET',
+                url: Mzk.Jira.Service.getBase() + '/agile/boards/15/issues/' + key,
+                disableCaching: false,
+            }).then(function (response, opts) {
+                    var obj = Ext.decode(response.responseText, true);
+                    if (obj) {
+                        var transformed = {};
+                        transformed.total = obj.total ? obj.total : null;
+                        if (transformed.total !== null && transformed.total > 0) {
+                            transformed.items = [];
+                            Ext.Array.each(obj.issues, function (jissue) {
+                                var issue = {};
+                                issue.key = jissue.key;
+                                jissue = jissue.fields;
+                                issue.status = jissue.status.name;
+                                if (jissue.assignee && jissue.assignee.name) {
+                                    issue.assignee = jissue.assignee.name;
+                                    issue.assigneeKey = jissue.assignee.key;
+                                }
+                                transformed.items.push(issue);
+                            });
+                        }
+                        Ext.log({dump: transformed});
+                    }
+                },
+                function (response, opts) {
+                    // me.getViewModel().set('profile.createAble', true);
+                });
+        }
+    }
+});
+
+
+Ext.define('MuzkatFinance.SprintView.Grid', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.sprintGridView',
+
+    viewModel: {
+        data: {
+            title: 'Closed'
+        }
+    },
+
+    controller: 'sprintGridViewController',
+    listeners: {
+        select: 'onSelect'
+    },
+
+    hideHeaders: true,
+    columns: [
+        {text: 'Status', dataIndex: 'state', flex: 1},
+        {
+            text: 'ID',
+            dataIndex: 'id',
+            flex: 2
+        },
+        {text: 'Name', dataIndex: 'name', flex: 4, cellWrap: true},
+        {text: 'ASSIGNEE', dataIndex: 'startDate', flex: 1},
+        {text: 'CREATOR', dataIndex: 'endDate', flex: 1},
+        {text: 'CREATOR', dataIndex: 'completeDate', flex: 1}
+    ],
+
+    bind: {
+        title: '{title}'
+    },
+
+    jViewType: undefined,
+    initComponent: function () {
+        var url = Mzk.Jira.Service.getBase() + '/agile/boards/15',
+            title = 'Closed';
+
+        if (Ext.isDefined(this.jViewType)) {
+            if (this.jViewType === 'upcoming') {
+                url += '/' + this.jViewType;
+                title = 'Latest & upcoming';
+                this.enableToolbarBottom();
+            }
+        } else {
+            url += '/closed';
+        }
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                url: url,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'values'
+                },
+                noCache: false
+            },
+            autoLoad: true
+        });
+
+        this.callParent(arguments);
+        this.getViewModel().set('title', title)
+    },
+
+    enableToolbarBottom: function () {
+        this.bbar = [{
+            xtype: 'container',
+            flex: 1,
+            height: 150,
+            layout: 'fit',
+            items: [{
+                xtype: 'box',
+                html: 'Kein Sprint gewählt'
+            }]
+        }]
+    }
+
+});
+
+
+Ext.define('MuzkatFinance.SprintView.Overview', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.sprintOverview',
+    itemId: 'sprintOverview',
+    title: 'BPC Sprints',
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
+    items: [{
+        xtype: 'sprintGridView',
+        jViewType: 'upcoming',
+        flex: 1
+    }, {
+        xtype: 'sprintGridView',
+        flex: 1
+    }],
+
+    initComponent: function () {
+        // this.MuzkatFinance.Service.getIssueTypes();
+        this.callParent(arguments);
+    }
+});
+/*
+Created by Erik Woitschig @devbnz
+*/
+Ext.define('MuzkatFinance.Grid', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.mzkJiraProjectGrid',
+    title: 'BPC ISSUES',
+    iconCls: 'fas fa-ticket-alt',
+    controller: 'accountGridController',
+    listeners: {
+        select: 'onSelect'
+    },
+    tbar: [],
+    hideHeaders: true,
+    columns: [
+        {
+            text: 'KEY',
+            dataIndex: 'key',
+            flex: 1, /*
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                var record = record.getData();
+                var closed = false;
+                // var issueTypeArray = MuzkatFinance.Service.issuetypes;
+                if (record && record.fields && record.fields.status.name === 'Closed') {
+                    // var issueObj = MuzkatFinance.Service.issueTypeMap.get(record.fields.issuetype.id);
+                    // if (Ext.isObject(issueObj) && issueObj.iconCls) {
+                    //     value = "<span class='" + issueObj.iconCls + "' style='color:" + issueObj.color + ";margin-left:5px;'></span>&nbsp;&nbsp;" + value;
+                    // }
+                    closed = true;
+                    metadata.tdStyle = 'color:black;text-decoration: line-through;';
+                }
+                if (record && record.fields && record.fields.issuetype) {
+                    var issueObj = MuzkatFinance.Service.issueTypeMap.get(record.fields.issuetype.id);
+                    if (Ext.isObject(issueObj) && issueObj.iconCls) {
+                        var color = issueObj.color;
+                        if (closed === true) {
+                            // color = '#000';
+                        }
+                        value = "<span class='" + issueObj.iconCls + "' style='color:" + color + ";margin-left:5px;'></span>&nbsp;&nbsp;" + value;
+                    }
+                    metadata.tdAttr = 'data-qtip=' + record.fields.issuetype.name;
+                }
+                // dateString = '<i>' + dateString + '</i>';
+                // dateString = '<span class="x-fa fa-clock-o" style="color:#4CAF50"></span>&nbsp;&nbsp;' + dateString;
+                return value;
+            }*/
+        },{
+            dataIndex: 'key',
+            flex: 1,
+            renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+                var record = record.getData();
+                var closed = false;
+                // var issueTypeArray = MuzkatFinance.Service.issuetypes;
+                if (record && record.fields && record.fields.status && record.fields.status.name) {
+                    value = record.fields.status.name;
+                }
+                return value;
+            }
+        },
+        {text: 'SUMMARY', dataIndex: 'title', flex: 4, cellWrap: true},
+        {
+            text: 'CREATED',
+            flex: 1,
+            xtype: 'datecolumn',
+            dataIndex: 'created',format: 'd.m.Y'
+        },
+        {text: 'ASSIGNEE', dataIndex: 'assignee', flex: 1},
+        {text: 'CREATOR', dataIndex: 'creator', flex: 1}
+    ],
+    bbar: {
+        xtype: 'pagingtoolbar',
+        displayInfo: true
+    },
+
+    initComponent: function () {
+        // this.MuzkatFinance.Service.getIssueTypes();
+
+
+        this.store = Ext.create('Ext.data.Store', {
+            proxy: {
+                type: 'ajax',
+                url: '/jira/' + this.projectId + '/issues',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'issues',
+                    totalProperty: 'total'
+                },
+                noCache: false,
+                pageParam: ''
+            },
+            pageSize: 100,
+            autoLoad: true,
+            model: 'MuzkatFinance.GridLine'
+        });
+
+        this.callParent(arguments);
+    }
+});
+Ext.define('MuzkatFinance.GridController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.accountGridController',
+
+    onSelect: function (rowModel, record, index, eOpts) {
+        var key = record.get('key');
+        if (rowModel.view) {
+            var view = rowModel.view;
+            view.up('#issueWrapper').updateIssue(key);
+        }
+    }
+});
+
+
+
+
+
+
+
+
 Ext.define('muzkatMap.Module', {
     singleton: true,
 
@@ -872,6 +2024,999 @@ Ext.define('muzkat.pi.camera.Main', {
         }, function (error) {
             Ext.toast(error);
         });
+    }
+});
+Ext.define('sysmon.view.restclient.RestMain', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.bpcSysMonRestMain',
+
+    requires: ['sysmon.view.restclient.client.*'],
+
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
+
+    initComponent: function () {
+
+        this.items = [{
+            xtype: 'container',
+            flex: 1,
+            defaults: {
+                padding: '5 5 5 5'
+            },
+            items: [{
+                xtype: 'textfield',
+                value: 'Search'
+            }, {
+                xtype: 'tabpanel',
+                items: [{
+                    xtype: 'sysMonRestHistoryPanel'
+                }]
+            }]
+        },
+            {
+                xtype: 'tabpanel',
+                flex: 7,
+                items: [{
+                    xtype: 'container',
+                    title: 'url',
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items: [{
+                        xtype: 'sysMonRestRequestPanel'
+                    }, {
+                        xtype: 'tabpanel',
+                        items: [{
+                            xtype: 'panel',
+                            title: 'Authorizastion',
+                            items: [{
+                                xtype: 'textfield',
+                                fieldLabel: 'QUERYFIELD'
+                            }, {
+                                xtype: 'textfield',
+                                fieldLabel: 'QUERYFIELD'
+                            }, {
+                                xtype: 'textfield',
+                                fieldLabel: 'QUERYFIELD'
+                            }]
+                        }]
+                    }, {
+                        xtype: 'tabpanel',
+                        items: [{
+                            xtype: 'sysMonRestClientBody'
+                        },{
+                            xtype: 'sysMonRestClientCookies'
+                        },{
+                            xtype: 'sysMonRestClientHeaders'
+                        },{
+                            xtype: 'sysMonRestClientTests'
+                        }]
+                    }]
+                }]
+            }
+        ];
+
+        this.callParent(arguments);
+    }
+});
+/**
+ * Created by bnz on 12.03.17.
+ */
+Ext.define('sysmon.view.restclient.client.headerType.RequestPanel', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.sysMonRestRequestPanel',
+
+    items: [{
+        xtype: 'textfield',
+        fieldLabel: 'QUERYFIELD'
+    }]
+
+});
+
+
+
+/**
+ * Created by bnz on 12.03.17.
+ */
+
+/**
+ * Created by bnz on 12.03.17.
+ */
+
+/**
+ * Created by bnz on 12.03.17.
+ */
+
+/**
+ * Created by bnz on 12.03.17.
+ */
+
+/**
+ * Created by bnz on 12.03.17.
+ */
+
+Ext.define('storage.view.Main', {
+    extend: 'Ext.tab.Panel',
+    alias: 'widget.mxStorage',
+
+    title: 'Virtimo Storage Manager',
+
+    scrollable: 'vertical',
+
+    activeTab: 1,
+
+    initComponent: function () {
+        this.items = [
+            {
+                xtype: 'panel',
+                moduleId: this.moduleId,
+                title: 'Virtimo Cloudview'
+            },
+            {
+                xtype: 'bpcStorageOverview',
+                title: 'Index Analyzer',
+                moduleId: this.moduleId
+            },
+            {
+                xtype: 'panel',
+                moduleId: this.moduleId,
+                title: 'Einstellungen',
+                tbar: [
+                    {xtype: 'button', text: 'Node hinzufügen'},
+                    {xtype: 'button', text: 'Node restarten'},
+                    {xtype: 'button', text: 'Node entfernen'}
+                ]
+            },
+            {
+                xtype: 'panel',
+                moduleId: this.moduleId,
+                title: 'Backup-Manager',
+                tbar: [
+                    {xtype: 'button', text: 'Einstellungen ändern'},
+                    {xtype: 'button', text: 'Auf Standard zurücksetzen'}
+                ]
+            },
+            {
+                xtype: 'panel',
+                moduleId: this.moduleId,
+                title: 'Backup',
+                tbar: [
+                    {xtype: 'button', text: 'Manuelles Backup starten'},
+                    {xtype: 'button', text: 'Auto-Backup Einstellungen'}
+                ]
+            },
+            {
+                xtype: 'panel',
+                moduleId: this.moduleId,
+                title: 'Restore',
+                tbar: [
+                    {xtype: 'button', text: 'Backup einspielen'},
+                    {xtype: 'button', text: 'Backup entfernen'}
+                ]
+            }
+        ];
+        this.callParent();
+    }
+});
+Ext.define('storage.view.StorageOverview', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.bpcStorageOverview',
+    xtype: 'bpcStorageOverview',
+
+    requires: [],
+
+    title: "Übersicht",
+    header: false,
+
+    viewModel: {
+        data: {
+            selectedIndex: undefined,
+            aliasData: undefined
+        },
+
+        stores: {
+            storageAliasesStore: {
+                data: '{aliasData}'
+            },
+            storageMappingsStore: {
+                data: '{mappingsData}'
+            }
+        },
+
+        formulas: {
+            activeAliasJSON: {
+                get: function (get) {
+                    var aliasObj = get("activeAlias");
+                    return JSON.stringify(aliasObj);
+                }
+            },
+
+            activeMappingJSON: {
+                get: function (get) {
+                    var aliasObj = get("activeMapping");
+                    return JSON.stringify(aliasObj);
+                }
+            }
+        }
+    },
+
+    moduleId: undefined,
+
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
+
+    defaults: {
+        padding: '10 10 10 10'
+    },
+
+    items: [{
+        xtype: 'container',
+        flex: 2,
+        items: [{
+            xtype: 'fieldset',
+            title: 'Index',
+            layout: 'anchor',
+            defaults: {
+                anchor: '100%'
+            },
+            items: [{
+                xtype: 'combobox',
+                fieldLabel: 'Datenbank wählen',
+                store: Ext.create('Ext.data.Store', {
+                    fields: ['indexName'],
+                    storeId: 'storageIndicesStore'
+                }),
+                queryMode: 'local',
+                displayField: 'indexName',
+                valueField: 'indexName',
+                listeners: {
+                    change: function (cmp, newValue, oldValue, eOpts) {
+                        cmp.up('bpcStorageOverview').updateIndexView(newValue);
+                    }
+                }
+            }]
+        },
+            {
+                xtype: 'fieldset',
+                title: 'Index Informationsn',
+                layout: 'anchor',
+                defaults: {
+                    xtype: 'textfield',
+                    readOnly: true,
+                    anchor: '100%'
+                },
+                itemId: 'indexInfos',
+                hidden: true,
+                items: [{
+                    fieldLabel: 'Erstellt:',
+                    bind: '{selectedIndex.settings.index.creation_date}'
+                }, {
+                    fieldLabel: 'Max Result Window:',
+                    bind: '{selectedIndex.settings.index.max_result_window}'
+                }, {
+                    fieldLabel: 'Replicas:',
+                    bind: '{selectedIndex.settings.index.number_of_replicas}'
+                }, {
+                    fieldLabel: 'Shards:',
+                    bind: '{selectedIndex.settings.index.number_of_shards}'
+                }, {
+                    fieldLabel: 'ID:',
+                    bind: '{selectedIndex.settings.index.uuid}'
+                }, {
+                    fieldLabel: 'Version / created:',
+                    bind: '{selectedIndex.settings.index.version.created}'
+                }]
+            }]
+    }, {
+        xtype: 'container',
+        flex: 4,
+        itemId: 'chartContainer',
+        layout: 'fit',
+        items: []
+    }]
+    ,
+
+    initComponent: function () {
+        this.callParent();
+        this.fillIndicesStore();
+    },
+
+    fillIndicesStore: function () {
+        Ext.log(this.self.getName() + ": loadConfig");
+        try {
+            Ext.Ajax.request({
+                url: '/cxf/bpc-httpproxy/httpProxy/1475932506433/*/_stats/store',
+
+                success: function (response, opts) {
+                    var responseObj = Ext.decode(response.responseText);
+                    var indices = [];
+                    Ext.iterate(responseObj.indices, function (index, values) {
+                        indices.push({
+                            indexName: index
+                        });
+                    });
+
+                    var store = Ext.StoreManager.lookup('storageIndicesStore');
+                    store.loadData(indices);
+                },
+
+                failure: function (response) {
+                    Ext.log('server-side failure with status code ' + response.status);
+                }
+            });
+
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR loadConfig", dump: e, stack: true, level: "error"});
+        }
+    },
+
+    updateIndexView: function (indice) {
+        var me = this;
+        Ext.Ajax.request({
+            url: '/cxf/bpc-httpproxy/httpProxy/1475932506433/' + indice,
+
+            success: function (response, opts) {
+                var responseObj = Ext.decode(response.responseText);
+                me.getViewModel().set('selectedIndex', responseObj[indice]);
+                me.down('#indexInfos').setVisible(true);
+                me.createIndexPanel();
+            },
+
+            failure: function (response) {
+                Ext.log('server-side failure with status code ' + response.status);
+            }
+        });
+
+    },
+
+    createIndexPanel: function () {
+        Ext.log(this.self.getName() + ": createIndexPanel");
+        try {
+
+            var indexObj = this.getViewModel().get('selectedIndex');
+
+            var aliasData = [];
+            Ext.iterate(indexObj.aliases, function (alias, valuesObj) {
+                aliasData.push({
+                    name: alias,
+                    details: valuesObj
+                });
+            });
+            this.getViewModel().set('aliasData', aliasData);
+
+            var mappingsData = [];
+            Ext.iterate(indexObj.mappings, function (mapping, valuesObj) {
+                mappingsData.push({
+                    name: mapping,
+                    details: valuesObj.properties
+                });
+            });
+
+            this.getViewModel().set('mappingsData', mappingsData);
+
+            var panel = {
+                xtype: 'container',
+                items: [
+                    {
+                        xtype: 'fieldset',
+                        layout: 'anchor',
+                        title: 'Aliases',
+                        defaults: {
+                            xtype: 'textarea',
+                            readOnly: true,
+                            anchor: '100%'
+                        },
+                        items: [{
+                            xtype: 'grid',
+                            forceFit: true,
+                            hideHeaders: false,
+                            emptyText: 'keine Datenbanken vorhanden',
+                            columns: [
+                                {dataIndex: 'name', width: 60, text: 'Alias'}
+                            ],
+                            bind: {
+                                store: '{storageAliasesStore}'
+                            },
+                            listeners: {
+                                rowclick: function (row, record, tr, rowIndex, e, eOpts) {
+                                    Ext.log({dump: record});
+                                    this.up('bpcStorageOverview').getViewModel().set('activeAlias', record.data);
+                                }
+                            }
+                        }, {
+                            fieldLabel: 'Details',
+                            bind: '{activeAliasJSON}',
+                            height: 200
+                        }]
+                    },
+                    {
+                        xtype: 'fieldset',
+                        layout: 'anchor',
+                        title: 'Mappings',
+                        defaults: {
+                            xtype: 'textarea',
+                            readOnly: true,
+                            anchor: '100%'
+                        },
+                        items: [{
+                            xtype: 'grid',
+                            forceFit: true,
+                            hideHeaders: false,
+                            emptyText: 'keine Mappings vorhanden',
+                            columns: [
+                                {dataIndex: 'name', width: 60, text: 'Mappings'}
+                            ],
+                            bind: {
+                                store: '{storageMappingsStore}'
+                            },
+                            listeners: {
+                                rowclick: function (row, record, tr, rowIndex, e, eOpts) {
+                                    Ext.log({dump: record});
+                                    this.up('bpcStorageOverview').getViewModel().set('activeMapping', record.data);
+                                }
+                            }
+                        }, {
+                            fieldLabel: 'Details',
+                            bind: '{activeMappingJSON}',
+                            padding: '10 10 10 10',
+                            height: 400
+                        }]
+                    }
+                ]
+            };
+            this.down('#chartContainer').removeAll();
+            this.down('#chartContainer').add([panel]);
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR createIndexPanel", dump: e, stack: true, level: "error"});
+        }
+    }
+})
+;
+
+/**
+ * Created by bnz on 08.10.16.
+ */
+Ext.define('BPC.view.widgets.storage.Storage', {
+    extend: 'Ext.tab.Panel',
+    alias: 'widget.bpcStorage',
+    xtype: 'bpcStorage',
+
+    requires: [],
+
+    autoDestroy: false,
+
+    controller: 'bpcStorageController',
+    viewModel: {
+        type: 'bpcStorageModel'
+    },
+
+
+    header: false,
+    activeTab: 0,
+
+    defaults: {
+        xtype: 'panel'
+    },
+
+    items: [{
+        title: 'Overview',
+        items: [{
+            xtype: 'fieldset',
+            layout: 'anchor',
+            defaultType: 'textfield',
+            defaults: {anchor: '100%'},
+            title: 'Gesamt',
+            items: [{
+                bind: '{all.total.store.size_in_bytes}',
+                fieldLabel: 'Size in bts'
+            }, {
+                bind: '{all.total.store.throttle_time_in_millis}',
+                fieldLabel: 'Throttle Time in ms'
+            }]
+        }, {
+            xtype: 'fieldset',
+            layout: 'anchor',
+            defaultType: 'textfield',
+            defaults: {anchor: '100%'},
+            title: 'Indices',
+            items: [{
+                bind: '{shards.total}',
+                fieldLabel: 'Total'
+            }, {
+                bind: '{shards.successful}',
+                fieldLabel: 'Successful'
+            }, {
+                bind: '{shards.failed}',
+                fieldLabel: 'Failed'
+            }]
+        }]
+    },{
+            title: 'Datenbanken',
+            items: [{
+                xtype: 'grid',
+                forceFit: true,
+                hideHeaders: false,
+                emptyText: 'keine Datenbanken vorhanden',
+                columns: [
+                    {dataIndex: 'index', width: 60, text: 'Index'},
+                    {dataIndex: 'sizeTotal', width: 20, text: 'Size'},
+                    {dataIndex: 'throttleTime', width: 20, text: 'ThrottleTime'}
+                ],
+                bind: {
+                    store: '{indicesStore}'
+                }
+            }]
+        }
+    ],
+
+    initComponent: function () {
+        this.callParent();
+        this.addSingleClusterPanel();
+        this.addSingleNodePanel();
+    },
+
+    refreshWidget: function () {
+        Ext.log(this.self.getName() + ": refreshWidget");
+        try {
+            var widgetCtrl = this.getController();
+            widgetCtrl.getBpcStatus();
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR refreshWidget", dump: e, stack: true, level: "error"});
+        }
+    },
+
+    addSingleClusterPanel: function () {
+        Ext.log(this.self.getName() + ": addNodePanel");
+
+            this.add([{
+                xtype: 'fieldset',
+                layout: 'anchor',
+                defaultType: 'textfield',
+                defaults: {anchor: '100%'},
+                title: 'Virtimo Cloud Cluster Stats',
+                items: [{
+                    bind: '{singleCluster.nodeId}',
+                    fieldLabel: 'Id'
+                }, {
+                    bind: '{singleCluster.nodeName}',
+                    fieldLabel: 'Name'
+                }, {
+                    bind: '{singleCluster.nodeHost}',
+                    fieldLabel: 'Host'
+                }, {
+                    bind: '{singleCluster.transportAddress}',
+                    fieldLabel: 'Transport'
+                }, {
+                    bind: '{singleCluster.filesystemAvailable}',
+                    fieldLabel: 'Available'
+                }, {
+                    bind: '{singleCluster.filesystemFree}',
+                    fieldLabel: 'Free'
+                }, {
+                    bind: '{singleCluster.filesystemTotal}',
+                    fieldLabel: 'Total'
+                }, {
+                    bind: '{singleCluster.filesystemSpins}',
+                    fieldLabel: 'Spins'
+                }]
+            }]);
+
+    },
+
+    addSingleNodePanel: function () {
+        Ext.log(this.self.getName() + ": addNodePanel");
+
+        this.add([{
+            xtype: 'fieldset',
+            layout: 'anchor',
+            defaultType: 'textfield',
+            defaults: {anchor: '100%'},
+            title: 'Cloud Node Stats',
+            items: [{
+                bind: '{singleNode.available_in_bytes}',
+                fieldLabel: 'Available'
+            }, {
+                bind: '{singleNode.free_in_bytes}',
+                fieldLabel: 'Free'
+            },{
+                bind: '{singleNode.total_in_bytes}',
+                fieldLabel: 'Total in Bytes'
+            }, {
+                bind: '{singleNode.mount}',
+                fieldLabel: 'Mountpoint'
+            }, {
+                bind: '{singleNode.path}',
+                fieldLabel: 'Node Pfade'
+            }, {
+                bind: '{singleNode.spins}',
+                fieldLabel: 'FS Spins'
+            },{
+                bind: '{singleNode.type}',
+                fieldLabel: 'FS Type'
+            }]
+        }]);
+
+    }
+});
+/**
+ * Created by bnz on 08.10.16.
+ */
+Ext.define('BPC.view.widgets.storage.StorageController', {
+
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.bpcStorageController',
+
+    init: function () {
+        Ext.log(this.self.getName() + ": init");
+        try {
+            this.getBpcStatus();
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR init", dump: e, stack: true, level: "error"});
+        }
+    },
+
+    getBpcStatus: function () {
+        Ext.log(this.self.getName() + ": getBpcStatus");
+        try {
+            var me = this;
+            Ext.Ajax.request({
+                url: '/cxf/bpc-httpproxy/httpProxy/1475932506433/*/_stats/store',
+                method: 'GET',
+
+                success: function (response) {
+                    var obj = Ext.decode(response.responseText);
+                    me.updateViewModel(obj);
+                },
+
+                failure: function (response) {
+                    BPC.Api.showNotification('Fehler: ' + response.status);
+                }
+            });
+
+            Ext.Ajax.request({
+                url: '/cxf/bpc-httpproxy/httpProxy/1475932506433/_nodes/stats/fs',
+                method: 'GET',
+
+                success: function (response) {
+                    var obj = Ext.decode(response.responseText);
+                    me.updateViewModelwithNodeStats(obj);
+                },
+
+                failure: function (response) {
+                    BPC.Api.showNotification('Fehler: ' + response.status);
+                }
+            });
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR getBpcStatus", dump: e, stack: true, level: "error"});
+        }
+    },
+
+    updateViewModel: function (obj) {
+        Ext.log(this.self.getName() + ": setBpcStatus");
+        try {
+            this.getViewModel().set("response", obj);
+            this.getViewModel().set("all", obj._all);
+            this.getViewModel().set("shards", obj._shards);
+            this.getViewModel().set("indices", obj.indices);
+            var indicesData = [];
+            Ext.iterate(obj.indices, function (index, values) {
+                var entry = {
+                    index: index,
+                    sizeTotal: values.total.store.size_in_bytes,
+                    throttleTime: values.total.store.throttle_time_in_millis
+                };
+                indicesData.push(entry);
+            });
+            this.getViewModel().set("indicesStoreData", indicesData);
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR setBpcStatus", dump: e, stack: true, level: "error"});
+        }
+    },
+    updateViewModelwithNodeStats: function (obj) {
+        Ext.log(this.self.getName() + ": updateViewModelwithNodeStats");
+        try {
+            this.getViewModel().set("statsResponse", obj);
+            this.getViewModel().set("clusterName", obj.cluster_name);
+            var clusterData = [];
+            var nodeData = [];
+            var nodeCount = 0;
+            Ext.iterate(obj.nodes, function (index, values) {
+                var entry = {
+                    nodeId: index,
+                    nodeName: values.name,
+                    nodeHost: values.host,
+                    transportAddress: values.transport_address,
+                    filesystemAvailable: values.fs.total.available_in_bytes,
+                    filesystemFree: values.fs.total.free_in_bytes,
+                    filesystemTotal: values.fs.total.total_in_bytes,
+                    filesystemSpins: values.fs.total.spins
+                };
+                nodeData = values.fs.data;
+                clusterData.push(entry);
+                nodeCount = nodeCount + 1;
+            });
+            this.getViewModel().set("clusterData", clusterData);
+            this.getViewModel().set("nodeData", nodeData);
+            this.getViewModel().set("nodeCount", nodeCount);
+
+            if (nodeCount === 1) {
+                this.getViewModel().set('singleNode', nodeData[0]);
+            }
+            if (clusterData.length === 1) {
+                this.getViewModel().set('singleCluster', clusterData[0]);
+            }
+        }
+        catch (e) {
+            Ext.log({msg: this.self.getName() + ": ERROR setBpcStatus", dump: e, stack: true, level: "error"});
+        }
+    }
+});
+/**
+ * Created by bnz on 08.10.16.
+ */
+Ext.define('BPC.view.widgets.storage.StorageModel', {
+    extend: 'Ext.app.ViewModel',
+    alias: 'viewmodel.bpcStorageModel',
+
+    data: {
+
+    },
+
+    stores: {
+        indicesStore: {
+            data: '{indicesStoreData}'
+        },
+        clusterStore: {
+            data: '{clusterData}'
+        },
+        nodeStore: {
+            data: '{nodeData}'
+        }
+    }
+});
+Ext.define('mzk.textviewer.Editor', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.muzkatJsonTextArea',
+
+    title: 'Editor',
+
+    layout: 'fit',
+
+    space: function (a) {
+        var b = [], e;
+        for (e = 0; e < a; e++) b.push(" ");
+        return b.join("")
+    },
+
+    initComponent: function () {
+        this.jsonField = Ext.create({
+            xtype: 'textareafield',
+            grow: true,
+            emptyText: 'Paste your JSON here',
+            maxLength: 100000000000000000000,
+            anchor: '100%'
+        });
+
+        this.items = [this.jsonField];
+
+        this.tbar = [{
+            iconCls: 'x-fa fa-tree',
+            text: 'Tree',
+            handler: function (btn) {
+                var jsonString = this.jsonField.getValue(),
+                    jsonObject = Ext.JSON.decode(jsonString, true);
+                if (jsonObject) {
+                    Ext.log({dump: jsonObject, msg: 'valid Json Obj'});
+                    this.mainView.tabPanel.add({
+                        xtype: 'muzkatJsonTreeView',
+                        jsonData: this.json2leaf(jsonObject)
+                    });
+                } else {
+                    Ext.log({msg: 'Json Obj not valid'});
+                }
+
+            }
+        }, {
+            iconCls: 'x-fa fa-copy',
+            text: 'Copy'
+        }, {
+            iconCls: 'x-fa fa-paint-brush',
+            text: 'Format',
+            handler: function (btn) {
+                for (var b = this.jsonField.getValue().replace(/\n/g, " ").replace(/\r/g, " "), e = [], c = 0, d = !1, f = 0, i = b.length; f < i; f++) {
+                    var g = b.charAt(f);
+                    if (d && g === d) b.charAt(f - 1) !== "\\" && (d = !1);
+                    else if (!d && (g === '"' || g === "'")) d = g;
+                    else if (!d && (g === " " || g === "\t")) g = "";
+                    else if (!d && g === ":") g += " ";
+                    else if (!d && g === ",") g += "\n" + this.space(c * 2); else if (!d && (g === "[" || g === "{")) c++, g += "\n" + this.space(c * 2);
+                    else if (!d && (g === "]" || g === "}")) c--, g = "\n" + this.space(c * 2) + g;
+                    e.push(g)
+                }
+
+                this.jsonField.setValue(e.join(""));
+            }
+        }, {
+            iconCls: 'x-fa fa-compress',
+            text: 'Remove white space',
+            handler: function (btn) {
+                var a = this.jsonField;
+                for (var b = a.getValue().replace(/\n/g, " ").replace(/\r/g, " "), e = [], c = !1, d = 0, f = b.length; d < f; d++) {
+                    var i = b.charAt(d);
+                    if (c && i === c) b.charAt(d - 1) !== "\\" && (c = !1);
+                    else if (!c && (i === '"' || i === "'")) c = i; else if (!c && (i === " " || i === "\t")) i = "";
+                    e.push(i)
+                }
+                a.setValue(e.join(""));
+            }
+        }, {
+            iconCls: 'x-fa fa-times',
+            text: 'Clear'
+        }, {
+            iconCls: 'x-fa fa-cloud-upload',
+            text: 'Load JSON data'
+        }].map(btn => {
+            btn.scope = this;
+            return btn;
+        });
+
+        this.callParent(arguments);
+    },
+
+    json2leaf: function (a) {
+        var b = [], c;
+        for (c in a) a.hasOwnProperty(c) && (a[c] === null ? b.push({
+            text: c + " : null",
+            leaf: !0,
+            iconCls: "x-fa fa-bug"
+        }) : typeof a[c] === "string" ? b.push({
+            text: c + ' : "' + a[c] + '"',
+            leaf: !0,
+            iconCls: "x-fa fa-bug"
+        }) : typeof a[c] === "number" ? b.push({
+            text: c + " : " + a[c],
+            leaf: !0,
+            iconCls: "x-fa fa-bug"
+        }) : typeof a[c] === "boolean" ? b.push({
+            text: c + " : " + (a[c] ? "true" : "false"),
+            leaf: !0,
+            iconCls: "x-fa fa-file"
+        }) : typeof a[c] === "object" ? b.push({
+            text: c,
+            children: this.json2leaf(a[c]),
+            iconCls: Ext.isArray(a[c]) ? "x-fa fa-folder" : "x-fa fa-file"
+        }) : typeof a[c] === "function" && b.push({
+            text: c + " : function",
+            leaf: !0,
+            iconCls: "x-fa fa-superscript"
+        }));
+        return b
+    }
+});
+Ext.define('mzk.textviewer.Main', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.mzkJsonViewerMain',
+
+    layout: 'fit',
+    header: false,
+
+    initComponent: function () {
+        var defaults = {
+            mainView: this,
+            padding: '5 5 5 5'
+        };
+
+        this.treePanel = Ext.create(Ext.apply({xtype: 'muzkatJsonTreeView'}, defaults));
+        this.editorPanel = Ext.create(Ext.apply({xtype: 'muzkatJsonTextArea'}, defaults));
+        this.tabPanel = Ext.create({xtype: 'tabpanel', items: [this.treePanel, this.editorPanel]});
+        this.tabPanel.setActiveTab(this.editorPanel);
+
+        this.items = [
+            this.tabPanel
+        ];
+
+        this.callParent(arguments);
+    },
+
+    prettifyXml: function (sourceXml) {
+        var xmlDoc = new DOMParser().parseFromString(sourceXml, 'application/xml');
+
+        var xsltDoc = new DOMParser().parseFromString([
+            '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">',
+            '  <xsl:output omit-xml-declaration="yes" indent="yes"/>',
+            '    <xsl:template match="node()|@*">',
+            '      <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>',
+            '    </xsl:template>',
+            '</xsl:stylesheet>',
+        ].join('\n'), 'application/xml');
+
+        var xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsltDoc);
+        var resultDoc = xsltProcessor.transformToDocument(xmlDoc);
+        return new XMLSerializer().serializeToString(resultDoc);
+    }
+});
+Ext.define('mzk.textviewer.Viewer', {
+    extend: 'Ext.tree.Panel',
+    alias: 'widget.muzkatJsonTreeView',
+
+    title: 'Viewer',
+
+    rootVisible: false,
+
+    listeners: {
+        /*render: function (a) {
+            a.getSelectionModel().on("selectionchange", function (a, b) {
+                d.gridbuild(b)
+            })
+        },*/
+        cellcontextmenu: function (view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+            e.preventDefault();
+            var b = e;
+            (new Ext.menu.Menu({
+                items: [{
+                    text: "Expand", handler: function () {
+                        a.expand()
+                    }
+                }, {
+                    text: "Expand all", handler: function () {
+                        a.expand(!0)
+                    }
+                }, "-", {
+                    text: "Collapse", handler: function () {
+                        a.collapse()
+                    }
+                },
+                    {
+                        text: "Collapse all", handler: function () {
+                            a.collapse(!0)
+                        }
+                    }]
+            })).showAt(b.getXY())
+        }
+    },
+
+    jsonData: undefined,
+
+    initComponent: function () {
+        Ext.log({dump: this.jsonData, msg: 'json data'});
+
+        this.store = Ext.create('Ext.data.TreeStore', {
+            root: {
+                expanded: false,
+                children: this.jsonData || []
+            }
+        });
+
+        // this.columns = [{
+        //     xtype: 'treecolumn',
+        //     text: 'Flight Endpoints',
+        //     dataIndex: 'text',
+        //     flex: 1,
+        //     renderer: function (val, meta, rec) {
+        //         if (rec.get('isLayover')) {
+        //             meta.tdStyle = 'color: gray; font-style: italic;';
+        //         }
+        //         return val;
+        //     }
+        // }, {
+        //     text: 'Duration',
+        //     dataIndex: 'duration',
+        //     width: 100
+        // }];
+
+        this.callParent(arguments);
     }
 });
 Ext.define('Playground.view.weather.Weather', {
@@ -1701,4 +3846,88 @@ Ext.define('Playground.view.winamp.slider.Vslider', {
   maxValue: 5000,
   vertical: true,
   height: 100
+});
+
+Ext.define('Playground.view.main.Main', {
+    extend: 'Ext.container.Container',
+    alias: 'widget.app-main',
+
+    titleRotation: 0,
+    tabRotation: 0,
+
+    defaults: {
+        xtype: 'panel',
+        layout: 'center'
+    },
+
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
+
+    initComponent: function () {
+        this.nav = Ext.create({
+            xtype: 'toolbar',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            flex: 1,
+            defaults: {
+                textAlign: 'left'
+            },
+            items: [{
+                iconCls: 'fas fa-info',
+                text: 'Info',
+                style: {
+                    marginBottom: '15px'
+                }
+            }, {
+                xtype: 'tbfill'
+            }, {
+                iconCls: 'fas fa-cogs',
+                text: 'Settings'
+            }]
+        });
+
+        let components = ['mzkJsonViewerMain', 'muzkatMap', 'mzkPiCameraMain', 'bnz-weather', 'bnz-winamp'].map(xtype => {
+            var i = {};
+            i.title = xtype.toUpperCase();
+            i.items = [{xtype: xtype}];
+            return i;
+        }).map((item, i) => {
+            item._cmp = item.items;
+            item.text = item.title;
+            item.handler = function (b) {
+                this.setComponentActive(b._cmp[0].xtype);
+            }
+            item.scope = this
+            if (!Ext.isDefined(item._cmp)) {
+                delete item.handler;
+                item.disabled = true;
+            }
+            this.nav.insert(i + 1, item);
+        });
+
+        this.mainFrame = Ext.create({
+            xtype: 'panel',
+            header: false,
+            flex: 8,
+            layout: 'card',
+            padding: '15 15 15 15',
+            items: [{xtype: 'container', html: 'hello'}]
+        });
+
+        this.items = [this.nav, this.mainFrame];
+        this.callParent(arguments);
+    },
+
+    setComponentActive: function (xtype, config) {
+        let cmpCfg = {} || config;
+        if (xtype) cmpCfg = Ext.apply(cmpCfg, {
+            xtype: xtype
+        })
+        this.mainFrame.removeAll();
+        this.mainFrame.add(cmpCfg);
+    }
 });

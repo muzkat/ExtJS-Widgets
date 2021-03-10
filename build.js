@@ -1,29 +1,13 @@
-let builder = require('@muzkat/nextjs-tools'),
-    fs = require('fs');
+let builder = require('@muzkat/nextjs-tools');
 
-// todo request targetFolder
-// todo bundle true
-
-// build app
-// builder({
-//     srcDir: 'src',
-//     packagesDir: 'application'
-// }).build();
-
-// build modules
-builder({
+let appBuilder = builder({
     srcDir: 'src',
+    appDir: 'application',
     packagesDir: 'components',
-    bundleFiles: true
-}).build();
+    bundleFiles: true,
+    deployDir: 'public/app'
+});
 
-// todo  await
-// let oldPath = 'build/bundle.js'
-// let newPath = 'public/app/bundle.js'
-//
-// if(fs.existsSync(newPath)) console.log('yo');
-//
-// fs.rename(oldPath, newPath, function (err) {
-//     if (err) throw err
-//     console.log('moved.')
-// })
+appBuilder.build().then((success) => {
+    if (success) appBuilder.deploy()
+});

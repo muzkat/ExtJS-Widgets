@@ -16,7 +16,6 @@ Ext.define('Playground.view.main.Main', {
     },
 
     initComponent: function () {
-
         this.nav = Ext.create({
             xtype: 'toolbar',
             layout: {
@@ -41,54 +40,15 @@ Ext.define('Playground.view.main.Main', {
             }]
         });
 
-        let components = ['mzkJsonViewerMain', 'muzkatMap', 'muzkatNrgMain', 'mzkPiCameraMain', 'bnz-weather', 'bnz-winamp'].map(xtype => {
+        let components = ['mzkJsonViewerMain', 'muzkatMap', 'mzkPiCameraMain', 'bnz-weather', 'bnz-winamp'].map(xtype => {
             var i = {};
             i.title = xtype.toUpperCase();
             i.items = [{xtype: xtype}];
             return i;
-        });
-
-        var temp = components.concat([] /*[{
-            title: 'Webamp',
-            iconCls: 'fas fa-play',
-            items: [{
-                xtype: 'bnz-winamp'
-            }]
-        }, {
-            title: 'Weather',
-            iconCls: 'fas fa-sun',
-            items: [{
-                xtype: 'bnz-weather'
-            }]
-        }, {
-            title: 'JSONViewer Online',
-            iconCls: 'fas fa-edit',
-            items: [{
-                xtype: 'devbnzJsonMain',
-                height: 600,
-                width: 800
-            }]
-        }, {
-            title: 'Muzkat Map',
-            iconCls: 'fas fa-map',
-            items: undefined
-        }, {
-            title: 'Muzkat Energy Codes',
-            iconCls: 'fas fa-bolt',
-            items: undefined
-        }, {
-            title: 'Raspberry Pi Camera',
-            iconCls: 'fas fa-camera',
-            items: undefined
-        }]
-        */
-        ).map((item, i) => {
+        }).map((item, i) => {
             item._cmp = item.items;
             item.text = item.title;
-            // delete item.items;
-            // delete item.title;
             item.handler = function (b) {
-                Ext.toast(b._cmp[0].xtype);
                 this.setComponentActive(b._cmp[0].xtype);
             }
             item.scope = this
@@ -109,12 +69,15 @@ Ext.define('Playground.view.main.Main', {
         });
 
         this.items = [this.nav, this.mainFrame];
-
         this.callParent(arguments);
     },
 
-    setComponentActive: function (xtype) {
+    setComponentActive: function (xtype, config) {
+        let cmpCfg = {} || config;
+        if (xtype) cmpCfg = Ext.apply(cmpCfg, {
+            xtype: xtype
+        })
         this.mainFrame.removeAll();
-        this.mainFrame.add({xtype: xtype});
+        this.mainFrame.add(cmpCfg);
     }
 });

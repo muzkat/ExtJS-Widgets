@@ -1,4 +1,4 @@
-Ext.define('mzk.jsonviewer.Viewer', {
+Ext.define('mzk.textviewer.Viewer', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.muzkatJsonTreeView',
 

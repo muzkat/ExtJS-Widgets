@@ -1,4 +1,4 @@
-Ext.define('mzk.jsonviewer.Editor', {
+Ext.define('mzk.textviewer.Editor', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.muzkatJsonTextArea',
 
