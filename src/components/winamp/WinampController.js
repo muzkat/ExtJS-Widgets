@@ -1,4 +1,4 @@
-Ext.define('Playground.view.winamp.WinampController', {
+Ext.define('muzkat.player.WinampController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.winamp-main',
 
@@ -169,7 +169,7 @@ Ext.define('Playground.view.winamp.WinampController', {
       this.source.stop();
     }
     me.getView().getViewModel().set("actualTrack", TrackInfo);
-    me.getView().getViewModel().set("actualhms", Playground.view.winamp.Util.createhmsString(TrackInfo.duration));
+    me.getView().getViewModel().set("actualhms", muzkat.player.Util.createhmsString(TrackInfo.duration));
     this.getData(TrackInfo.stream_url);
   },
 
@@ -246,7 +246,7 @@ Ext.define('Playground.view.winamp.WinampController', {
       client_id: '40493f5d7f709a9881675e26c824b136'
     });
 
-    SC.get(Playground.view.winamp.Util.initialPlaylist).then(function(tracks) {
+    SC.get(muzkat.player.Util.initialPlaylist).then(function(tracks) {
       var store = Ext.data.StoreManager.lookup('playList');
       store.add(tracks);
     });
@@ -269,7 +269,7 @@ Ext.define('Playground.view.winamp.WinampController', {
 
   soundcloud: function() {
     me = this;
-    url = Playground.view.winamp.Util.welcomeTrack;
+    url = muzkat.player.Util.welcomeTrack;
     SC.get('/resolve', {
       url: url
     }).then(function(sound) {

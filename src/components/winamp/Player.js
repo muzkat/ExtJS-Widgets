@@ -1,4 +1,4 @@
-Ext.define('Playground.view.winamp.player.Player', {
+Ext.define('muzkat.player.Player', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.bnz-player',
 
@@ -9,7 +9,7 @@ Ext.define('Playground.view.winamp.player.Player', {
     }],
 
     initComponent: function () {
-        this.title = Playground.view.winamp.assets.Strings.playerTitle;
+        this.title = muzkat.player.Util.playerTitle;
 
         this.items = [{
             xtype: 'panel',
@@ -55,27 +55,25 @@ Ext.define('Playground.view.winamp.player.Player', {
                         type: 'hbox',
                         align: 'stretch'
                     },
-                    items: [{
-                        xtype: 'bnz-hslider',
+                    items: [Ext.apply(muzkat.player.Util.getHorizontalSlider(), {
                         itemId: 'volumeSilder',
                         flex: 2
-                    }, {
-                        xtype: 'bnz-hslider',
+                    }), Ext.apply(muzkat.player.Util.getHorizontalSlider(), {
                         itemId: 'panSlider',
                         value: 0,
                         increment: 1,
                         minValue: -10,
                         maxValue: 10,
                         flex: 1
-                    }]
+                    })]
                 }, {
                     columnWidth: 0.20,
                     items: [{
-                        text: Playground.view.winamp.assets.Strings.playerEqBtn,
+                        text: muzkat.player.Util.playerEqBtn,
                         xtype: 'button',
                         itemId: 'eq'
                     }, {
-                        text: Playground.view.winamp.assets.Strings.playerPlBtn,
+                        text: muzkat.player.Util.playerPlBtn,
                         xtype: 'button',
                         itemId: 'pl'
                     }]
@@ -84,10 +82,9 @@ Ext.define('Playground.view.winamp.player.Player', {
                 xtype: 'panel',
                 header: false,
                 border: false,
-                items: [{
-                    xtype: 'bnz-hslider',
+                items: [Ext.apply(muzkat.player.Util.getHorizontalSlider(), {
                     width: '100%'
-                }]
+                })]
             }]
         }];
 

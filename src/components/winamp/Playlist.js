@@ -1,16 +1,11 @@
-Ext.define('Playground.view.winamp.playlist.Playlist', {
+Ext.define('muzkat.player.Playlist', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.bnz-winamp-playlist',
 
-    border: 1,
     reference: 'winamp-playlist',
     tools: [{
         type: 'close'
     }],
-    layout: {
-        type: 'fit'
-    },
-    store: undefined,
 
     viewConfig: {
         plugins: {
@@ -27,7 +22,7 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
     }, {
         dataIndex: 'duration',
         renderer: function (value, meta, record) {
-            return Playground.view.winamp.Util.createhmsString(value);
+            return muzkat.player.Util.createhmsString(value);
         }
     }],
 
@@ -49,7 +44,7 @@ Ext.define('Playground.view.winamp.playlist.Playlist', {
     }],
 
     initComponent: function () {
-        this.title = Playground.view.winamp.assets.Strings.playerTitle + ' ' + Playground.view.winamp.assets.Strings.playlistTitle;
+        this.title = muzkat.player.Util.playerTitle + ' ' + muzkat.player.Util.playlistTitle;
         this.store = Ext.create('Ext.data.Store', {
             storeId: 'playList',
             fields: ['id', 'title', 'user', 'duration']

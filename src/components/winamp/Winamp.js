@@ -1,9 +1,17 @@
-Ext.define('Playground.view.winamp.Winamp', {
+Ext.define('muzkat.player.Winamp', {
     extend: 'Ext.panel.Panel',
     xtype: 'bnz-winamp',
 
     controller: 'winamp-main',
-    viewModel: 'winamp-main',
+
+    viewModel: {
+        data: {
+            name: 'Playground',
+            track: undefined,
+            actualTrack: {},
+            actualhms: '00:00:00'
+        }
+    },
 
     title: 'Multimedia Player',
     header: false,
@@ -11,11 +19,25 @@ Ext.define('Playground.view.winamp.Winamp', {
     height: 'auto',
     border: 0,
 
+    layout: {
+        type: 'vbox', align: 'stretch'
+    },
+
     initComponent: function () {
 
-        this.items = [{
+        this.player = Ext.create({
             xtype: 'bnz-player'
-        }, {
+        });
+
+        let eqs = [], eqCount = 0;
+        while (eqCount <= 12) {
+            eqs.push(Ext.apply(muzkat.player.Util.getVerticalSlider(), (eqCount === 0 ? {
+                itemId: 'freqSilder'
+            } : {})))
+            eqCount++
+        }
+
+        this.eq = Ext.create({
             xtype: 'panel',
             title: 'WINAMP EQUALIZER',
             tools: [{
@@ -36,37 +58,20 @@ Ext.define('Playground.view.winamp.Winamp', {
                 // defaults are applied to items, not the container
                 //flex: 1
             },
-            items: [{
-                xtype: 'bnz-winampslider',
-                itemId: 'freqSilder'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }, {
-                xtype: 'bnz-winampslider'
-            }]
-        }, {
-            xtype: 'bnz-winamp-playlist'
+            items: eqs.map((e) => {
+                return { // wrap in container for flex - slider extends a cmp !== container
+                    xtype: 'container',flex:1,
+                    layout: 'center',
+                    items: [e]
+                }
+            })
+        });
+
+        this.items = [this.player, this.eq, {
+            xtype: 'bnz-winamp-playlist', flex: 1
         }, {
             xtype: 'panel',
-            title: Playground.view.winamp.assets.Strings.playerTitle + ' MONO MODE',
+            title: muzkat.player.Util.playerTitle + ' MONO MODE',
             items: [{
                 /**
                  Balance-Slider Left/Right
@@ -99,8 +104,7 @@ Ext.define('Playground.view.winamp.Winamp', {
                     }]
                 }, {
                     xtype: 'container',
-                    items: [{
-                        xtype: 'bnz-hslider',
+                    items: [Ext.apply(muzkat.player.Util.getHorizontalSlider(), {
                         itemId: 'balanceSliderLR',
                         width: '100%',
                         value: 0,
@@ -108,15 +112,14 @@ Ext.define('Playground.view.winamp.Winamp', {
                         minValue: -10,
                         maxValue: 10,
                         vertical: false
-                    }]
+                    })]
                 }, {
                     xtype: 'container',
                     layout: {
                         type: 'hbox',
                         align: 'stretch'
                     },
-                    items: [{
-                        xtype: 'bnz-winampslider',
+                    items: [Ext.apply(muzkat.player.Util.getVerticalSlider(), {
                         itemId: 'sliderL',
                         value: 5,
                         increment: 1,
@@ -124,8 +127,7 @@ Ext.define('Playground.view.winamp.Winamp', {
                         maxValue: 10,
                         vertical: true,
                         height: 100
-                    }, {
-                        xtype: 'bnz-winampslider',
+                    }), Ext.apply(muzkat.player.Util.getVerticalSlider(), {
                         itemId: 'sliderR',
                         value: 5,
                         increment: 1,
@@ -133,7 +135,7 @@ Ext.define('Playground.view.winamp.Winamp', {
                         maxValue: 10,
                         vertical: true,
                         height: 100
-                    }]
+                    })]
                 }]
                 /*
                 Stereo-Signlechanel-Mono-Switch: man kann einen
