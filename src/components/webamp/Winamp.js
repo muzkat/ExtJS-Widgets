@@ -26,14 +26,16 @@ Ext.define('muzkat.player.webamp', {
     initComponent: function () {
 
         this.player = Ext.create({
-            xtype: 'bnz-player'
+            xtype: 'muzkatPlayer'
         });
 
         let eqs = [], eqCount = 0;
         while (eqCount <= 12) {
             eqs.push(Ext.apply(muzkat.player.Util.getVerticalSlider(), (eqCount === 0 ? {
                 itemId: 'freqSilder'
-            } : {})))
+            } : {
+                eqRangeButton: eqCount
+            })))
             eqCount++
         }
 
@@ -44,7 +46,6 @@ Ext.define('muzkat.player.webamp', {
                 type: 'close'
             }],
             border: 1,
-            reference: 'webamp-eq',
             layout: {
                 type: 'hbox',
                 align: 'stretch'
@@ -71,9 +72,11 @@ Ext.define('muzkat.player.webamp', {
             })
         });
 
-        this.items = [this.player, this.eq, {
+        this.playlist = Ext.create({
             xtype: 'bnz-webamp-playlist', flex: 1
-        }];
+        })
+
+        this.items = [this.player, this.eq, this.playlist];
         this.callParent();
     }
 });

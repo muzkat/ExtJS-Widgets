@@ -156,8 +156,7 @@ Ext.define('muzkat.player.webampController', {
     },
 
     onItemClick: function (view, record, item, index, e, eOpts) {
-        me = this;
-        me.setActualTrack(record.data);
+        this.setActualTrack(record.data);
     },
 
     setPan: function (cmp, x, y, eOpts) {
@@ -166,11 +165,9 @@ Ext.define('muzkat.player.webampController', {
     },
 
     setActualTrack: function (TrackInfo) {
-        if (this.source != undefined) {
-            this.source.stop();
-        }
-        me.getView().getViewModel().set("actualTrack", TrackInfo);
-        me.getView().getViewModel().set("actualhms", muzkat.player.Util.createhmsString(TrackInfo.duration));
+        this.stopPlay();
+        this.getView().getViewModel().set("actualTrack", TrackInfo);
+        this.getView().getViewModel().set("actualhms", muzkat.player.Util.createhmsString(TrackInfo.duration));
         this.getData(TrackInfo.stream_url);
     },
 
@@ -247,7 +244,7 @@ Ext.define('muzkat.player.webampController', {
     },
 
     stopPlay: function () {
-        this.source.stop();
+        if (this.source) this.source.stop();
     },
 
     playSound: function () {

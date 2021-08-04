@@ -2,7 +2,6 @@ Ext.define('muzkat.player.Playlist', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.bnz-webamp-playlist',
 
-    reference: 'webamp-playlist',
     tools: [{
         type: 'close'
     }],

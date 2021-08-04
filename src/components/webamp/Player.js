@@ -1,9 +1,8 @@
 Ext.define('muzkat.player.Player', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.bnz-player',
+    alias: 'widget.muzkatPlayer',
 
     border: 0,
-    reference: 'webamp-player',
     tools: [{
         type: 'close'
     }],
