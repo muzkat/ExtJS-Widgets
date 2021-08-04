@@ -3,7 +3,7 @@ Ext.define('muzkat.player.Player', {
     alias: 'widget.bnz-player',
 
     border: 0,
-    reference: 'winamp-player',
+    reference: 'webamp-player',
     tools: [{
         type: 'close'
     }],
@@ -92,7 +92,7 @@ Ext.define('muzkat.player.Player', {
     },
 
     bbar: [{
-        iconCls: 'x-fa fa-step-backward'
+        iconCls: 'x-fa fa-step-backward', disabled:true
     }, {
         iconCls: 'x-fa fa-play',
         itemId: 'playBtn'
@@ -101,11 +101,11 @@ Ext.define('muzkat.player.Player', {
         iconCls: 'x-fa fa-pause',
         handler: 'stopPlay'
     }, {
-        iconCls: 'x-fa fa-stop'
+        iconCls: 'x-fa fa-stop', disabled:true
     }, {
-        iconCls: 'x-fa fa-step-forward'
+        iconCls: 'x-fa fa-step-forward', disabled:true
     }, {
-        iconCls: 'x-fa fa-eject'
+        iconCls: 'x-fa fa-eject', disabled:true
     }]
 
 });

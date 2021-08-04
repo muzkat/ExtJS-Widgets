@@ -1,8 +1,8 @@
 Ext.define('muzkat.player.Playlist', {
     extend: 'Ext.grid.Panel',
-    alias: 'widget.bnz-winamp-playlist',
+    alias: 'widget.bnz-webamp-playlist',
 
-    reference: 'winamp-playlist',
+    reference: 'webamp-playlist',
     tools: [{
         type: 'close'
     }],
@@ -14,6 +14,7 @@ Ext.define('muzkat.player.Playlist', {
         }
     },
     hideHeaders: true,
+
     columns: [{
         xtype: 'rownumberer'
     }, {

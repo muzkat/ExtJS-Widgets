@@ -40,7 +40,7 @@ Ext.define('Playground.view.main.Main', {
             }]
         });
 
-        let components = ['mzkJsonViewerMain', 'muzkatMap', 'mzkPiCameraMain', 'bnz-weather', 'bnz-winamp'].map(xtype => {
+        let components = ['mzkJsonViewerMain', 'muzkatMap', 'mzkPiCameraMain', 'bnz-weather', 'muzkatWebamp'].map(xtype => {
             var i = {};
             i.title = xtype.toUpperCase();
             i.items = [{xtype: xtype}];

@@ -14,8 +14,7 @@ Ext.define('muzkat.player.Util', {
         var hours = Math.floor(milli / 36e5),
             mins = Math.floor((milli % 36e5) / 6e4),
             secs = Math.floor((milli % 6e4) / 1000);
-        var hmsString = this.pad(hours) + ':' + this.pad(mins) + ':' + this.pad(secs);
-        return hmsString;
+        return this.pad(hours) + ':' + this.pad(mins) + ':' + this.pad(secs);
     },
 
     // add leading zeros
@@ -39,15 +38,15 @@ Ext.define('muzkat.player.Util', {
     },
 
     getVerticalSlider: function () {
-      return {
-        xtype: 'slider',
-        value: 100,
-        increment: 100,
-        minValue: 0,
-        maxValue: 5000,
-        vertical: true,
-        height: 100
-      }
+        return {
+            xtype: 'slider',
+            value: 100,
+            increment: 100,
+            minValue: 0,
+            maxValue: 5000,
+            vertical: true,
+            height: 100
+        }
     },
 
 });
