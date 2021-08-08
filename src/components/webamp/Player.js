@@ -70,11 +70,17 @@ Ext.define('muzkat.player.Player', {
                     items: [{
                         text: muzkat.player.Util.playerEqBtn,
                         xtype: 'button',
-                        itemId: 'eq'
+                        cmp: 'eq',
+                        handler: (b) => {
+                            this.toggleView(b.cmp);
+                        }
                     }, {
                         text: muzkat.player.Util.playerPlBtn,
                         xtype: 'button',
-                        itemId: 'pl'
+                        cmp: 'playlist',
+                        handler: (b) => {
+                            this.toggleView(b.cmp);
+                        }
                     }]
                 }]
             }, {
@@ -86,12 +92,16 @@ Ext.define('muzkat.player.Player', {
                 })]
             }]
         }];
-
         this.callParent(arguments);
     },
 
+    toggleView: function (cmp) {
+        let item = this.main[cmp];
+        item.setVisible(!item.isVisible())
+    },
+
     bbar: [{
-        iconCls: 'x-fa fa-step-backward', disabled:true
+        iconCls: 'x-fa fa-step-backward', disabled: true
     }, {
         iconCls: 'x-fa fa-play',
         itemId: 'playBtn'
@@ -100,11 +110,11 @@ Ext.define('muzkat.player.Player', {
         iconCls: 'x-fa fa-pause',
         handler: 'stopPlay'
     }, {
-        iconCls: 'x-fa fa-stop', disabled:true
+        iconCls: 'x-fa fa-stop', disabled: true
     }, {
-        iconCls: 'x-fa fa-step-forward', disabled:true
+        iconCls: 'x-fa fa-step-forward', disabled: true
     }, {
-        iconCls: 'x-fa fa-eject', disabled:true
+        iconCls: 'x-fa fa-eject', disabled: true
     }]
 
 });

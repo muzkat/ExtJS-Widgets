@@ -34,12 +34,6 @@ Ext.define('muzkat.player.webampController', {
         '#freqSilder': {
             change: 'setMainFilter'
         },
-        '#pl': {
-            click: 'showHide'
-        },
-        '#eq': {
-            click: 'showHide'
-        },
         '#LeftRight': {
             toggle: 'separateChannel'
         },
@@ -135,26 +129,6 @@ Ext.define('muzkat.player.webampController', {
         }
     },
 
-    //TODO refactoring needed
-    showHide: function (cmp) {
-        if (cmp.itemId === 'eq') {
-            eq = this.lookupReference('webamp-eq')
-            if (eq.hidden) {
-                eq.show();
-            } else {
-                eq.hide();
-            }
-        }
-        if (cmp.itemId === 'pl') {
-            pl = this.lookupReference('webamp-playlist')
-            if (pl.hidden) {
-                pl.show();
-            } else {
-                pl.hide();
-            }
-        }
-    },
-
     onItemClick: function (view, record, item, index, e, eOpts) {
         this.setActualTrack(record.data);
     },
@@ -190,7 +164,7 @@ Ext.define('muzkat.player.webampController', {
         this.gainNode.gain.value = 0.5;
     },
 
-    init: function (view) {
+    initPlayer: function (view) {
         this.audioContext = new AudioContext(),
             this.gainR = this.audioContext.createGain(),
             this.gainL = this.audioContext.createGain(),
@@ -219,27 +193,24 @@ Ext.define('muzkat.player.webampController', {
         this.mainFilter.connect(this.panNode);
         this.panNode.connect(this.gainNode);
 
-
         Ext.Loader.loadScript({
             url: 'https://connect.soundcloud.com/sdk/sdk-3.0.0.js',
             onLoad: () => {
-                console.log('SoundCloud libary successfully loaded.');
-                this.initSoundcloud();
+                SC.initialize({
+                    client_id: '40493f5d7f709a9881675e26c824b136'
+                });
+                this.updatePlaylist(muzkat.player.Util.initialPlaylist);
             },
             onError: function () {
-                console.log('Error while loading the SoundCloud libary');
             }
         });
     },
 
-    initSoundcloud: function () {
-        SC.initialize({
-            client_id: '40493f5d7f709a9881675e26c824b136'
-        });
-
-        SC.get(muzkat.player.Util.initialPlaylist).then(function (tracks) {
-            var store = Ext.data.StoreManager.lookup('playList');
-            store.add(tracks);
+    updatePlaylist: function (playlistPath) {
+        return SC.get(playlistPath).then((tracks) => {
+            let s = this.getView().playlist.store;
+            s.removeAll();
+            s.add((tracks || []));
         });
     },
 
@@ -257,6 +228,7 @@ Ext.define('muzkat.player.webampController', {
         this.soundcloud();
     },
 
+    // cors issues
     soundcloud: function () {
         SC.get('/resolve', {
             url: muzkat.player.Util.welcomeTrack
@@ -268,27 +240,19 @@ Ext.define('muzkat.player.webampController', {
     },
 
     getData: function (sample) {
-        let me = this.audioContext,
-            source = me.createBufferSource();
-        this.source = source;
-        source.connect(this.mainFilter);
-
-        var request = new XMLHttpRequest();
-        request.open("GET", new URL(sample + '?client_id=17a992358db64d99e492326797fff3e8'), true);
-        request.responseType = "arraybuffer";
-        request.onload = function () {
-            me.decodeAudioData(request.response,
-                function (buffer) {
-                    console.log("sample loaded!");
-                    sample.loaded = true;
-                    source.buffer = buffer;
-                    source.start();
-                },
-                function () {
-                    console.log("Decoding error! ");
-                });
-        }
-        sample.loaded = false;
-        request.send();
+        this.source = this.audioContext.createBufferSource();
+        this.source.connect(this.mainFilter);
+        fetch((sample + '?client_id=' + this.getView().clientId))
+            .then((response) => {
+                return response.arrayBuffer();
+            }).then((buffer) => {
+            this.audioContext.decodeAudioData(buffer).then((decodedBuffer) => {
+                console.log('sample loaded:' + sample);
+                this.source.buffer = decodedBuffer;
+                this.source.start();
+            }).catch((e) => {
+                console.log('decode error');
+            })
+        })
     }
 });

@@ -20,13 +20,15 @@ Ext.define('muzkat.player.webamp', {
     border: 0,
 
     layout: {
-        type: 'vbox', align: 'stretch'
+        type: 'vbox',
+        align: 'stretch'
     },
 
     initComponent: function () {
 
         this.player = Ext.create({
-            xtype: 'muzkatPlayer'
+            xtype: 'muzkatPlayer',
+            main: this
         });
 
         let eqs = [], eqCount = 0;
@@ -73,10 +75,14 @@ Ext.define('muzkat.player.webamp', {
         });
 
         this.playlist = Ext.create({
-            xtype: 'bnz-webamp-playlist', flex: 1
+            xtype: 'bnz-webamp-playlist',
+            flex: 1
         })
+
+        this.clientId = '17a992358db64d99e492326797fff3e8';
 
         this.items = [this.player, this.eq, this.playlist];
         this.callParent();
+        this.getController().initPlayer();
     }
 });
