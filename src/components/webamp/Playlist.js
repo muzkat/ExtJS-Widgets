@@ -1,6 +1,6 @@
 Ext.define('muzkat.player.Playlist', {
     extend: 'Ext.grid.Panel',
-    alias: 'widget.bnz-webamp-playlist',
+    alias: 'widget.muzkatPlaylist',
 
     tools: [{
         type: 'close'
@@ -49,6 +49,13 @@ Ext.define('muzkat.player.Playlist', {
             storeId: 'playList',
             fields: ['id', 'title', 'user', 'duration']
         });
+
+        this.listeners = {
+            itemdblclick: (view, r) => {
+                this.player.setActualTrack(r.data);
+            }
+        }
+
         this.callParent();
     }
 });

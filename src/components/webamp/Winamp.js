@@ -25,7 +25,6 @@ Ext.define('muzkat.player.webamp', {
     },
 
     initComponent: function () {
-
         this.player = Ext.create({
             xtype: 'muzkatPlayer',
             main: this
@@ -34,7 +33,10 @@ Ext.define('muzkat.player.webamp', {
         let eqs = [], eqCount = 0;
         while (eqCount <= 12) {
             eqs.push(Ext.apply(muzkat.player.Util.getVerticalSlider(), (eqCount === 0 ? {
-                itemId: 'freqSilder'
+                itemId: 'freqSilder',
+                listeners: {
+                    change: this.player.setMainFilter.bind(this.player)
+                }
             } : {
                 eqRangeButton: eqCount
             })))
@@ -43,6 +45,7 @@ Ext.define('muzkat.player.webamp', {
 
         this.eq = Ext.create({
             xtype: 'panel',
+            player: this.player,
             title: 'webamp EQUALIZER',
             tools: [{
                 type: 'close'
@@ -75,7 +78,8 @@ Ext.define('muzkat.player.webamp', {
         });
 
         this.playlist = Ext.create({
-            xtype: 'bnz-webamp-playlist',
+            xtype: 'muzkatPlaylist',
+            player: this.player,
             flex: 1
         })
 
@@ -83,6 +87,6 @@ Ext.define('muzkat.player.webamp', {
 
         this.items = [this.player, this.eq, this.playlist];
         this.callParent();
-        this.getController().initPlayer();
+        this.player.initAudio();
     }
 });
