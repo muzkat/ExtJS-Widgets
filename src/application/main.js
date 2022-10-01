@@ -2,6 +2,8 @@ Ext.define('Playground.view.main.Main', {
     extend: 'Ext.container.Container',
     alias: 'widget.app-main',
 
+    requires: ['Playground.view.main.config'],
+
     titleRotation: 0,
     tabRotation: 0,
 
@@ -40,8 +42,8 @@ Ext.define('Playground.view.main.Main', {
             }]
         });
 
-        let components = ['mzkJsonViewerMain', 'muzkatMap', 'mzkPiCameraMain', 'bnz-weather', 'muzkatWebamp'].map(xtype => {
-            var i = {};
+        let components = Playground.view.main.config.map(xtype => {
+            let i = {};
             i.title = xtype.toUpperCase();
             i.items = [{xtype: xtype}];
             return i;
