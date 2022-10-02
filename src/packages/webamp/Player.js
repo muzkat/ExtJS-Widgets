@@ -2,6 +2,8 @@ Ext.define('muzkat.player.Player', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.muzkatPlayer',
 
+    requires: ['muzkat.player.Config', 'muzkat.player.Util'],
+
     border: 0,
     tools: [{
         type: 'close'
@@ -168,7 +170,7 @@ Ext.define('muzkat.player.Player', {
                 SC.initialize({
                     client_id: '40493f5d7f709a9881675e26c824b136'
                 });
-                this.updatePlaylist(muzkat.player.Util.initialPlaylist);
+                this.updatePlaylist(muzkat.player.Config.initialPlaylist);
             },
             onError: function () {
             }

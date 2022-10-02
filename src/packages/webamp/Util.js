@@ -1,9 +1,6 @@
 Ext.define('muzkat.player.Util', {
     singleton: true,
 
-    welcomeTrack: 'https://soundcloud.com/bnzlovesyou/daktari-preview',
-    initialPlaylist: '/users/1672444/tracks',
-
     playerTitle: 'WEBAMP',
     playerEqBtn: 'EQ',
     playerPlBtn: 'PL',
