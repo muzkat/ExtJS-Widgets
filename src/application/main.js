@@ -42,7 +42,7 @@ Ext.define('Playground.view.main.Main', {
             }]
         });
 
-        let components = Playground.view.main.config.map(xtype => {
+        let components = Playground.view.main.config.components.map(xtype => {
             let i = {};
             i.title = xtype.toUpperCase();
             i.items = [{xtype: xtype}];

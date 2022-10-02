@@ -19,7 +19,7 @@
   "homepage": "https://github.com/muzkat/ExtJS-Widgets#readme",
   "devDependencies": {
     "@muzkat/muzkat-ext-app": "^0.0.1",
-    "@muzkat/nextjs-tools": "^0.1.6",
+    "@muzkat/nextjs-tools": "^0.1.7",
     "browserify": "^17.0.0"
   }
 }
