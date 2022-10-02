@@ -1001,9 +1001,19 @@ Ext.define('Playground.view.weather.WeatherModel', {
     }
 });
 
+Ext.define('muzkat.player.Config', {
+    singleton: true,
+
+    welcomeTrack: 'https://soundcloud.com/bnzlovesyou/daktari-preview',
+    initialPlaylist: '/users/1672444/tracks'
+
+});
+
 Ext.define('muzkat.player.Player', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.muzkatPlayer',
+
+    requires: ['muzkat.player.Config', 'muzkat.player.Util'],
 
     border: 0,
     tools: [{
@@ -1171,7 +1181,7 @@ Ext.define('muzkat.player.Player', {
                 SC.initialize({
                     client_id: '40493f5d7f709a9881675e26c824b136'
                 });
-                this.updatePlaylist(muzkat.player.Util.initialPlaylist);
+                this.updatePlaylist(muzkat.player.Config.initialPlaylist);
             },
             onError: function () {
             }
@@ -1394,9 +1404,6 @@ Ext.define('muzkat.player.Playlist', {
 
 Ext.define('muzkat.player.Util', {
     singleton: true,
-
-    welcomeTrack: 'https://soundcloud.com/bnzlovesyou/daktari-preview',
-    initialPlaylist: '/users/1672444/tracks',
 
     playerTitle: 'WEBAMP',
     playerEqBtn: 'EQ',
@@ -1623,7 +1630,7 @@ Ext.define('Playground.view.main.Main', {
             }]
         });
 
-        let components = Playground.view.main.config.map(xtype => {
+        let components = Playground.view.main.config.components.map(xtype => {
             let i = {};
             i.title = xtype.toUpperCase();
             i.items = [{xtype: xtype}];
